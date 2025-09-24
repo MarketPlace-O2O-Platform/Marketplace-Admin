@@ -1,8 +1,38 @@
+/* 메인 페이지 컨테이너 */
+.stores-page {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.page-header .btn {
+  flex-shrink: 0;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
 .page-header-content {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
+  width: 100%;
+}
+
+.page-description {
+  color: var(--text-secondary);
+  margin-top: 4px;
 }
 
 .btn--primary {
@@ -16,31 +46,70 @@
   border-color: var(--primary-light);
 }
 
+/* 검색 및 필터 영역 */
+.filters-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.search-box {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-color);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
 .stores-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 900px;
 }
 
 .stores-table th {
   background: var(--bg-tertiary);
-  padding: 1rem;
+  padding: 16px 12px;
   text-align: left;
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 0.875rem;
   border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
 }
 
 .stores-table td {
-  padding: 1rem;
+  padding: 16px 12px;
   border-bottom: 1px solid var(--border-light);
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  vertical-align: top;
+  vertical-align: middle;
+  color: var(--text-primary);
+  font-size: 14px;
 }
 
 .stores-table tbody tr:hover {
   background: var(--bg-secondary);
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background: var(--bg-secondary) !important;
 }
 
 .stores-table tbody tr:last-child td {
@@ -58,14 +127,50 @@
   color: var(--text-primary);
 }
 
+.store-name-compact {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.store-thumbnail-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbnail-image-small {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnail-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  font-size: 14px;
+}
+
 .store-id {
   font-size: 0.75rem;
   color: var(--text-tertiary);
 }
 
 .store-description-cell {
-  max-width: 300px;
-  line-height: 1.4;
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-secondary);
 }
 
 .store-status {
@@ -225,63 +330,154 @@
   color: var(--text-tertiary);
 }
 
-.loading-container {
+.table-footer {
+  padding: 16px;
+  background: var(--bg-color);
+  border-top: 1px solid var(--border-color);
   text-align: center;
-  padding: 3rem;
+}
+
+.results-info {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 14px;
+}
+
+.load-more {
+  text-align: center;
+  margin-top: 24px;
+}
+
+/* 모달 오버레이 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--bg-color);
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-content h3 {
+  margin: 0 0 16px 0;
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.modal-content p {
+  margin: 0 0 24px 0;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* 빈 상태와 로딩 상태 */
+.loading,
+.empty-state {
+  text-align: center;
+  padding: 40px;
   color: var(--text-secondary);
 }
 
-.error-banner {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #dc2626;
-  padding: 1rem;
+.error-message {
+  background: #fee2e2;
+  color: var(--danger-color);
+  padding: 12px 16px;
   border-radius: 6px;
-  margin-bottom: 1.5rem;
-  text-align: center;
+  margin-bottom: 16px;
 }
 
-.load-more-container {
-  text-align: center;
-  margin: 2rem 0;
-}
-
-.load-more-btn {
-  padding: 0.75rem 2rem;
-}
-
-@media (max-width: 768px) {
-  .stores-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+/* 반응형 스타일 */
+@media (max-width: 1024px) {
+  .stores-page {
+    padding: 16px;
   }
 
-  .page-header-content {
-    flex-direction: column;
-    align-items: stretch;
+  .table-container {
+    overflow-x: auto;
   }
 
-  .store-card-header {
-    flex-direction: column;
-    gap: 0.75rem;
-    align-items: flex-start;
+  .stores-table {
+    min-width: 900px;
   }
 
-  .store-major-badge {
-    align-self: flex-start;
-  }
-
-  .store-card-footer {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
+  .stores-table th,
+  .stores-table td {
+    padding: 12px 8px;
+    font-size: 13px;
   }
 
   .action-buttons {
-    justify-content: stretch;
+    flex-direction: column;
+    gap: 4px;
   }
 
-  .btn {
-    flex: 1;
+  .action-buttons .btn {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .store-description-cell {
+    max-width: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .stores-table {
+    min-width: 800px;
+  }
+
+  .store-description-cell {
+    max-width: 120px;
+  }
+
+  .action-cell {
+    width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stores-page {
+    padding: 12px;
+  }
+
+  .stores-table th,
+  .stores-table td {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+
+  .action-buttons .btn {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+
+  .store-description-cell {
+    max-width: 80px;
   }
 }

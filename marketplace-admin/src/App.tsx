@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
-import UsersPage from './pages/UsersPage';
+import MembersPage from './pages/MembersPage';
 import StoresPage from './pages/StoresPage';
 import StoreDetailPage from './pages/StoreDetailPage';
 import CouponsPage from './pages/CouponsPage';
@@ -27,7 +27,7 @@ function App() {
             path="/users"
             element={
               <PrivateRoute>
-                <UsersPage />
+                <MembersPage />
               </PrivateRoute>
             }
           />

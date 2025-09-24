@@ -63,12 +63,12 @@ const PaybackCouponList: React.FC<PaybackCouponListProps> = ({ marketId, marketN
   };
 
   const handleCouponClick = (couponId: number) => {
-    navigate(`/coupons/${couponId}`);
+    navigate(`/coupons/${couponId}?from=store&marketId=${marketId}`);
   };
 
   const handleEditCoupon = (couponId: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/coupons/${couponId}/edit`);
+    navigate(`/coupons/${couponId}/edit?from=store&marketId=${marketId}`);
   };
 
   const handleDeleteCoupon = async (couponId: number, e: React.MouseEvent) => {
@@ -78,12 +78,33 @@ const PaybackCouponList: React.FC<PaybackCouponListProps> = ({ marketId, marketN
     }
 
     try {
-      await couponApi.deleteCoupon(couponId);
+      await couponApi.deletePaybackCoupon(couponId);
       setCoupons(prev => prev.filter(coupon => coupon.couponId !== couponId));
       alert('환급쿠폰이 삭제되었습니다.');
     } catch (err) {
       alert('환급쿠폰 삭제에 실패했습니다.');
       console.error('Failed to delete payback coupon:', err);
+    }
+  };
+
+  const handleToggleVisibility = async (couponId: number, isHidden: boolean, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const action = isHidden ? '공개' : '숨김';
+    if (!window.confirm(`이 환급쿠폰을 ${action} 처리하시겠습니까?`)) {
+      return;
+    }
+
+    try {
+      await couponApi.togglePaybackCouponVisibility(couponId);
+      setCoupons(prev => prev.map(coupon =>
+        coupon.couponId === couponId
+          ? { ...coupon, isHidden: !isHidden }
+          : coupon
+      ));
+      alert(`환급쿠폰이 ${action} 처리되었습니다.`);
+    } catch (err) {
+      alert(`환급쿠폰 ${action} 처리에 실패했습니다.`);
+      console.error('Failed to toggle payback coupon visibility:', err);
     }
   };
 
@@ -176,7 +197,7 @@ const PaybackCouponList: React.FC<PaybackCouponListProps> = ({ marketId, marketN
                   onChange={(e) => handleSelectAll(e.target.checked)}
                 />
               </th>
-              <th>쿠폰 ID</th>
+              <th>순번</th>
               <th>쿠폰명</th>
               <th>설명</th>
               <th>상태</th>
@@ -185,7 +206,7 @@ const PaybackCouponList: React.FC<PaybackCouponListProps> = ({ marketId, marketN
             </tr>
           </thead>
           <tbody>
-            {coupons.map((coupon) => (
+            {coupons.map((coupon, index) => (
               <tr
                 key={coupon.couponId}
                 className="coupon-row"
@@ -198,7 +219,7 @@ const PaybackCouponList: React.FC<PaybackCouponListProps> = ({ marketId, marketN
                     onClick={(e) => e.stopPropagation()}
                   />
                 </td>
-                <td onClick={() => handleCouponClick(coupon.couponId)}>{coupon.couponId}</td>
+                <td onClick={() => handleCouponClick(coupon.couponId)}>{index + 1}</td>
                 <td className="coupon-name" onClick={() => handleCouponClick(coupon.couponId)}>{coupon.couponName}</td>
                 <td className="coupon-description" onClick={() => handleCouponClick(coupon.couponId)}>
                   <div className="description-content">
@@ -209,6 +230,13 @@ const PaybackCouponList: React.FC<PaybackCouponListProps> = ({ marketId, marketN
                 <td onClick={() => handleCouponClick(coupon.couponId)}>{getMemberIssuedBadge(coupon.isMemberIssued)}</td>
                 <td className="action-cell">
                   <div className="action-buttons">
+                    <button
+                      className={`btn btn-sm ${coupon.isHidden ? 'btn-success' : 'btn-warning'}`}
+                      onClick={(e) => handleToggleVisibility(coupon.couponId, coupon.isHidden, e)}
+                      title={coupon.isHidden ? '공개' : '숨기기'}
+                    >
+                      {coupon.isHidden ? '👁️' : '👁️‍🗨️'}
+                    </button>
                     <button
                       className="btn btn-sm btn-secondary"
                       onClick={(e) => handleEditCoupon(coupon.couponId, e)}

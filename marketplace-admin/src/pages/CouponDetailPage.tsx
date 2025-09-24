@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { couponApi } from '../api/coupon';
 import type { Coupon, PaybackCoupon } from '../types/coupon';
@@ -8,9 +8,13 @@ import { COUPON_TYPE_LABELS } from '../types/coupon';
 const CouponDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const [coupon, setCoupon] = useState<Coupon | PaybackCoupon | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const fromStore = searchParams.get('from') === 'store';
+  const returnMarketId = searchParams.get('marketId');
 
   useEffect(() => {
     if (id) {
@@ -22,23 +26,23 @@ const CouponDetailPage: React.FC = () => {
     try {
       setLoading(true);
 
-      // 먼저 일반 쿠폰 API로 시도
-      try {
-        const response = await couponApi.getCoupon(couponId);
-        setCoupon(response.response);
-        return;
-      } catch (err) {
-        // 일반 쿠폰 API 실패시 환급쿠폰 API로 시도
-        console.log('일반 쿠폰 API 실패, 환급쿠폰 API로 시도');
-      }
-
-      // 환급쿠폰 API로 시도
+      // 먼저 환급쿠폰 API로 시도 (실제로는 증정쿠폰 데이터)
       try {
         const response = await couponApi.getPaybackCoupon(couponId);
         setCoupon(response.response);
         return;
       } catch (err) {
-        console.log('환급쿠폰 API도 실패');
+        // 환급쿠폰 API 실패시 일반쿠폰 API로 시도 (실제로는 환급쿠폰 데이터)
+        console.log('환급쿠폰 API 실패, 일반쿠폰 API로 시도');
+      }
+
+      // 일반쿠폰 API로 시도
+      try {
+        const response = await couponApi.getCoupon(couponId);
+        setCoupon(response.response);
+        return;
+      } catch (err) {
+        console.log('일반쿠폰 API도 실패');
         throw err;
       }
 
@@ -51,7 +55,11 @@ const CouponDetailPage: React.FC = () => {
   };
 
   const handleEdit = () => {
-    navigate(`/coupons/${id}/edit`);
+    if (fromStore && returnMarketId) {
+      navigate(`/coupons/${id}/edit?from=store&marketId=${returnMarketId}`);
+    } else {
+      navigate(`/coupons/${id}/edit`);
+    }
   };
 
   const handleDelete = async () => {
@@ -60,17 +68,54 @@ const CouponDetailPage: React.FC = () => {
     }
 
     try {
-      await couponApi.deleteCoupon(coupon.couponId);
+      if (isGiftCoupon(coupon)) {
+        await couponApi.deleteCoupon(coupon.couponId);
+      } else {
+        await couponApi.deletePaybackCoupon(coupon.couponId);
+      }
       alert('쿠폰이 삭제되었습니다.');
-      navigate('/coupons');
+
+      if (fromStore && returnMarketId) {
+        navigate(`/stores/${returnMarketId}?tab=coupons`);
+      } else {
+        navigate('/coupons');
+      }
     } catch (err) {
       alert('쿠폰 삭제에 실패했습니다.');
       console.error('Failed to delete coupon:', err);
     }
   };
 
+  const handleToggleVisibility = async () => {
+    if (!coupon) return;
+
+    const action = coupon.isHidden ? '공개' : '숨김';
+    if (!window.confirm(`이 쿠폰을 ${action} 처리하시겠습니까?`)) {
+      return;
+    }
+
+    try {
+      if (isGiftCoupon(coupon)) {
+        await couponApi.toggleGiftCouponVisibility(coupon.couponId);
+      } else {
+        await couponApi.togglePaybackCouponVisibility(coupon.couponId);
+      }
+
+      // 상태 업데이트
+      setCoupon(prev => prev ? { ...prev, isHidden: !prev.isHidden } : null);
+      alert(`쿠폰이 ${action} 처리되었습니다.`);
+    } catch (err) {
+      alert(`쿠폰 ${action} 처리에 실패했습니다.`);
+      console.error('Failed to toggle coupon visibility:', err);
+    }
+  };
+
   const handleBack = () => {
-    navigate('/coupons');
+    if (fromStore && returnMarketId) {
+      navigate(`/stores/${returnMarketId}?tab=coupons`);
+    } else {
+      navigate('/coupons');
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -99,7 +144,7 @@ const CouponDetailPage: React.FC = () => {
   };
 
   const isGiftCoupon = (coupon: Coupon | PaybackCoupon): coupon is Coupon => {
-    return 'stock' in coupon && 'issuedCount' in coupon && 'deadLine' in coupon;
+    return coupon.couponType === 'GIFT';
   };
 
   if (loading) {
@@ -132,7 +177,13 @@ const CouponDetailPage: React.FC = () => {
             ← 뒤로가기
           </button>
           <h1>쿠폰 상세정보</h1>
-          <div className="actions">
+          <div className="actions" style={{ display: 'flex', gap: '12px' }}>
+            <button
+              className={`btn ${coupon.isHidden ? 'btn-success' : 'btn-warning'}`}
+              onClick={handleToggleVisibility}
+            >
+              {coupon.isHidden ? '👁️ 공개' : '👁️‍🗨️ 숨기기'}
+            </button>
             <button className="btn btn-primary" onClick={handleEdit}>
               수정
             </button>
@@ -148,57 +199,55 @@ const CouponDetailPage: React.FC = () => {
               <h2>{coupon.couponName}</h2>
               <div className="badges">
                 <span className="badge badge-info">
-                  {COUPON_TYPE_LABELS[coupon.couponType]}
+                  {COUPON_TYPE_LABELS[coupon.couponType] || coupon.couponType || '쿠폰'}
                 </span>
-                {getStatusBadge(coupon)}
-                {coupon.isMemberIssued === true && (
-                  <span className="badge badge-secondary">회원발급</span>
-                )}
-                {coupon.isMemberIssued === false && (
-                  <span className="badge badge-outline">일반발급</span>
+                {coupon.isHidden ? (
+                  <span className="badge badge-warning">숨김</span>
+                ) : (
+                  <span className="badge badge-success">활성</span>
                 )}
               </div>
             </div>
 
-            <div className="detail-grid">
+            <div className="detail-grid" style={{ gap: '16px' }}>
               <div className="detail-item">
                 <label>쿠폰 설명</label>
                 <div className="description">{coupon.couponDescription}</div>
               </div>
 
-              {/* 증정쿠폰의 경우에만 매장 정보 표시 */}
+              <div className="detail-row" style={{ gap: '16px' }}>
+                <div className="detail-item">
+                  <label>매장명</label>
+                  <span>{coupon.marketName}</span>
+                </div>
+                <div className="detail-item">
+                  <label>쿠폰 ID</label>
+                  <span>#{coupon.couponId}</span>
+                </div>
+              </div>
+
+              {/* 증정쿠폰의 경우에만 재고/마감일 표시 */}
               {isGiftCoupon(coupon) && (
                 <>
-                  <div className="detail-row">
-                    <div className="detail-item">
-                      <label>매장명</label>
-                      <span>{coupon.marketName}</span>
-                    </div>
-                    <div className="detail-item">
-                      <label>주소</label>
-                      <span>{coupon.address}</span>
-                    </div>
-                  </div>
-
-                  <div className="detail-row">
-                    <div className="detail-item">
-                      <label>쿠폰 타입</label>
-                      <span>{COUPON_TYPE_LABELS[coupon.couponType]}</span>
-                    </div>
+                  <div className="detail-row" style={{ gap: '16px' }}>
                     <div className="detail-item">
                       <label>마감일</label>
                       <span>{formatDateOnly(coupon.deadLine)}</span>
                     </div>
-                  </div>
-
-                  <div className="detail-row">
                     <div className="detail-item">
                       <label>총 재고</label>
                       <span>{coupon.stock?.toLocaleString() || 0}개</span>
                     </div>
+                  </div>
+
+                  <div className="detail-row" style={{ gap: '16px' }}>
                     <div className="detail-item">
                       <label>발급 수량</label>
                       <span>{coupon.issuedCount?.toLocaleString() || 0}개</span>
+                    </div>
+                    <div className="detail-item">
+                      <label>남은 재고</label>
+                      <span>{((coupon.stock || 0) - (coupon.issuedCount || 0)).toLocaleString()}개</span>
                     </div>
                   </div>
 
@@ -212,98 +261,6 @@ const CouponDetailPage: React.FC = () => {
                         />
                       </div>
                       <span className="percentage">{getUsageRate(coupon)}%</span>
-                    </div>
-                  </div>
-
-                  <div className="detail-row">
-                    <div className="detail-item">
-                      <label>쿠폰 ID</label>
-                      <span>#{coupon.couponId}</span>
-                    </div>
-                    <div className="detail-item">
-                      <label>매장 ID</label>
-                      <span>#{coupon.marketId}</span>
-                    </div>
-                  </div>
-
-                  <div className="detail-row">
-                    <div className="detail-item">
-                      <label>활성 상태</label>
-                      <span className={coupon.isAvailable ? 'status-active' : 'status-inactive'}>
-                        {coupon.isAvailable ? '활성' : '비활성'}
-                      </span>
-                    </div>
-                    <div className="detail-item">
-                      <label>숨김 상태</label>
-                      <span className={coupon.isHidden ? 'status-hidden' : 'status-visible'}>
-                        {coupon.isHidden ? '숨김' : '표시'}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="detail-row">
-                    <div className="detail-item">
-                      <label>회원 발급</label>
-                      <span className={coupon.isMemberIssued ? 'status-enabled' : 'status-disabled'}>
-                        {coupon.isMemberIssued ? '활성화' : '비활성화'}
-                      </span>
-                    </div>
-                    <div className="detail-item">
-                      <label>남은 재고</label>
-                      <span className="stock-remaining">
-                        {((coupon.stock || 0) - (coupon.issuedCount || 0)).toLocaleString()}개
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="detail-item">
-                    <label>생성일시</label>
-                    <span>{formatDate(coupon.couponCreatedAt)}</span>
-                  </div>
-                </>
-              )}
-
-              {/* 환급쿠폰의 경우 */}
-              {!isGiftCoupon(coupon) && (
-                <>
-                  <div className="detail-row">
-                    <div className="detail-item">
-                      <label>매장명</label>
-                      <span>{coupon.marketName}</span>
-                    </div>
-                    <div className="detail-item">
-                      <label>쿠폰 타입</label>
-                      <span>{COUPON_TYPE_LABELS[coupon.couponType]}</span>
-                    </div>
-                  </div>
-
-                  <div className="detail-row">
-                    <div className="detail-item">
-                      <label>쿠폰 ID</label>
-                      <span>#{coupon.couponId}</span>
-                    </div>
-                    <div className="detail-item">
-                      <label>매장 ID</label>
-                      <span>#{coupon.marketId}</span>
-                    </div>
-                  </div>
-
-                  <div className="detail-row">
-                    <div className="detail-item">
-                      <label>숨김 상태</label>
-                      <span className={coupon.isHidden ? 'status-hidden' : 'status-visible'}>
-                        {coupon.isHidden ? '숨김' : '표시'}
-                      </span>
-                    </div>
-                    <div className="detail-item">
-                      <label>회원 발급</label>
-                      <span className={
-                        coupon.isMemberIssued === true ? 'status-enabled' :
-                        coupon.isMemberIssued === false ? 'status-disabled' : 'status-neutral'
-                      }>
-                        {coupon.isMemberIssued === true ? '활성화' :
-                         coupon.isMemberIssued === false ? '비활성화' : '미설정'}
-                      </span>
                     </div>
                   </div>
                 </>

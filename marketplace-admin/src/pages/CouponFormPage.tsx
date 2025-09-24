@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { couponApi } from '../api/coupon';
 import { storeAPI } from '../api/store';
-import type { CreateCouponRequest } from '../types/coupon';
+import type { CreateGiftCouponRequest, CreatePaybackCouponRequest, CouponType } from '../types/coupon';
 import type { Store } from '../types/store';
 
 const CouponFormPage: React.FC = () => {
@@ -12,18 +12,18 @@ const CouponFormPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const isEdit = Boolean(id);
   const preselectedMarketId = searchParams.get('marketId');
+  const preselectedCouponType = searchParams.get('couponType') as CouponType;
+  const fromStore = searchParams.get('from') === 'store';
+  const returnMarketId = searchParams.get('marketId'); // 돌아갈 매장 ID
 
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<CreateCouponRequest>({
+  const [formData, setFormData] = useState({
     couponName: '',
-    couponDescription: '',
+    description: '',
     deadLine: '',
     stock: 0,
-    isHidden: false,
-    isAvailable: true,
-    isMemberIssued: false,
-    couponType: 'GIFT',
+    couponType: preselectedCouponType || 'GIFT' as CouponType,
     marketId: preselectedMarketId ? parseInt(preselectedMarketId) : 0
   });
 
@@ -46,17 +46,22 @@ const CouponFormPage: React.FC = () => {
   const loadCoupon = async (couponId: number) => {
     try {
       setLoading(true);
-      const response = await couponApi.getCoupon(couponId);
-      const coupon = response.response;
+      // 먼저 환급쿠폰 API로 시도 (실제로는 증정쿠폰 데이터)
+      let coupon;
+      try {
+        const response = await couponApi.getPaybackCoupon(couponId);
+        coupon = response.response;
+      } catch {
+        // 환급쿠폰 API 실패시 일반쿠폰 API로 시도 (실제로는 환급쿠폰 데이터)
+        const response = await couponApi.getCoupon(couponId);
+        coupon = response.response;
+      }
 
       setFormData({
         couponName: coupon.couponName,
-        couponDescription: coupon.couponDescription,
-        deadLine: coupon.deadLine.split('T')[0], // Convert to date format for input
-        stock: coupon.stock,
-        isHidden: coupon.isHidden,
-        isAvailable: coupon.isAvailable,
-        isMemberIssued: coupon.isMemberIssued,
+        description: coupon.couponDescription,
+        deadLine: coupon.deadLine ? coupon.deadLine.split('T')[0] : '', // Convert to date format for input
+        stock: coupon.stock || 0,
         couponType: coupon.couponType,
         marketId: coupon.marketId
       });
@@ -76,19 +81,20 @@ const CouponFormPage: React.FC = () => {
       return;
     }
 
-    if (!formData.couponDescription.trim()) {
+    if (!formData.description.trim()) {
       alert('쿠폰 설명을 입력해주세요.');
       return;
     }
 
-    if (!formData.deadLine) {
-      alert('마감일을 선택해주세요.');
-      return;
-    }
-
-    if (formData.stock <= 0) {
-      alert('재고는 1개 이상이어야 합니다.');
-      return;
+    if (formData.couponType === 'GIFT') {
+      if (!formData.deadLine) {
+        alert('마감일을 선택해주세요.');
+        return;
+      }
+      if (formData.stock <= 0) {
+        alert('재고는 1개 이상이어야 합니다.');
+        return;
+      }
     }
 
     if (formData.marketId === 0) {
@@ -99,21 +105,57 @@ const CouponFormPage: React.FC = () => {
     try {
       setLoading(true);
 
-      // Convert date to ISO string
-      const submitData = {
-        ...formData,
-        deadLine: new Date(formData.deadLine).toISOString()
-      };
-
       if (isEdit && id) {
-        await couponApi.updateCoupon(parseInt(id), submitData);
+        // 수정
+        if (formData.couponType === 'GIFT') {
+          const submitData = {
+            couponName: formData.couponName,
+            description: formData.description,
+            deadLine: new Date(formData.deadLine).toISOString(),
+            stock: formData.stock
+          };
+          await couponApi.updateGiftCoupon(parseInt(id), submitData);
+        } else {
+          const submitData = {
+            couponName: formData.couponName,
+            description: formData.description
+          };
+          await couponApi.updatePaybackCoupon(parseInt(id), submitData);
+        }
         alert('쿠폰이 수정되었습니다.');
-      } else {
-        await couponApi.createCoupon(submitData);
-        alert('쿠폰이 생성되었습니다.');
-      }
 
-      navigate('/coupons');
+        // 매장에서 온 경우 해당 매장의 쿠폰 탭으로 돌아가기
+        if (fromStore && returnMarketId) {
+          navigate(`/stores/${returnMarketId}?tab=coupons`);
+        } else {
+          navigate('/coupons');
+        }
+      } else {
+        // 생성
+        if (formData.couponType === 'GIFT') {
+          const submitData = {
+            couponName: formData.couponName,
+            description: formData.description,
+            deadLine: new Date(formData.deadLine).toISOString(),
+            stock: formData.stock
+          };
+          await couponApi.createGiftCoupon(formData.marketId, submitData);
+        } else {
+          const submitData = {
+            couponName: formData.couponName,
+            description: formData.description
+          };
+          await couponApi.createPaybackCoupon(formData.marketId, submitData);
+        }
+        alert('쿠폰이 생성되었습니다.');
+
+        // 매장에서 온 경우 해당 매장의 쿠폰 탭으로 돌아가기
+        if (preselectedMarketId) {
+          navigate(`/stores/${preselectedMarketId}?tab=coupons`);
+        } else {
+          navigate('/coupons');
+        }
+      }
     } catch (err) {
       alert(isEdit ? '쿠폰 수정에 실패했습니다.' : '쿠폰 생성에 실패했습니다.');
       console.error('Failed to save coupon:', err);
@@ -138,7 +180,12 @@ const CouponFormPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate('/coupons');
+    // 매장에서 온 경우 해당 매장의 쿠폰 탭으로 돌아가기
+    if (fromStore && returnMarketId) {
+      navigate(`/stores/${returnMarketId}?tab=coupons`);
+    } else {
+      navigate('/coupons');
+    }
   };
 
   if (loading && isEdit) {
@@ -161,6 +208,46 @@ const CouponFormPage: React.FC = () => {
 
         <form className="coupon-form" onSubmit={handleSubmit}>
           <div className="form-group">
+            <label htmlFor="marketId">매장 *</label>
+            <select
+              id="marketId"
+              name="marketId"
+              value={formData.marketId}
+              onChange={handleInputChange}
+              disabled={isEdit}
+              required
+            >
+              <option value={0}>매장을 선택하세요</option>
+              {stores.map(store => (
+                <option key={store.marketId} value={store.marketId}>
+                  {store.marketName} - {store.address}
+                </option>
+              ))}
+            </select>
+            {isEdit && (
+              <small className="form-help">수정 시에는 매장을 변경할 수 없습니다.</small>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="couponType">쿠폰 타입 *</label>
+            <select
+              id="couponType"
+              name="couponType"
+              value={formData.couponType}
+              onChange={handleInputChange}
+              disabled={isEdit}
+              required
+            >
+              <option value="GIFT">증정쿠폰</option>
+              <option value="PAYBACK">환급쿠폰</option>
+            </select>
+            {isEdit && (
+              <small className="form-help">수정 시에는 쿠폰 타입을 변경할 수 없습니다.</small>
+            )}
+          </div>
+
+          <div className="form-group">
             <label htmlFor="couponName">쿠폰명 *</label>
             <input
               type="text"
@@ -174,11 +261,11 @@ const CouponFormPage: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="couponDescription">쿠폰 설명 *</label>
+            <label htmlFor="description">쿠폰 설명 *</label>
             <textarea
-              id="couponDescription"
-              name="couponDescription"
-              value={formData.couponDescription}
+              id="description"
+              name="description"
+              value={formData.description}
               onChange={handleInputChange}
               placeholder="쿠폰 설명을 입력하세요"
               rows={4}
@@ -186,98 +273,34 @@ const CouponFormPage: React.FC = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="couponType">쿠폰 타입 *</label>
-            <select
-              id="couponType"
-              name="couponType"
-              value={formData.couponType}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="GIFT">증정쿠폰</option>
-              <option value="PAYBACK">환급쿠폰</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="marketId">매장 *</label>
-            <select
-              id="marketId"
-              name="marketId"
-              value={formData.marketId}
-              onChange={handleInputChange}
-              required
-            >
-              <option value={0}>매장을 선택하세요</option>
-              {stores.map(store => (
-                <option key={store.marketId} value={store.marketId}>
-                  {store.marketName} - {store.address}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="stock">재고 *</label>
-              <input
-                type="number"
-                id="stock"
-                name="stock"
-                value={formData.stock}
-                onChange={handleInputChange}
-                min="1"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="deadLine">마감일 *</label>
-              <input
-                type="date"
-                id="deadLine"
-                name="deadLine"
-                value={formData.deadLine}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <div className="checkbox-group">
-              <label className="checkbox-label">
+          {formData.couponType === 'GIFT' && (
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="stock">재고 *</label>
                 <input
-                  type="checkbox"
-                  name="isAvailable"
-                  checked={formData.isAvailable}
+                  type="number"
+                  id="stock"
+                  name="stock"
+                  value={formData.stock}
                   onChange={handleInputChange}
+                  min="1"
+                  required
                 />
-                활성화
-              </label>
+              </div>
 
-              <label className="checkbox-label">
+              <div className="form-group">
+                <label htmlFor="deadLine">마감일 *</label>
                 <input
-                  type="checkbox"
-                  name="isHidden"
-                  checked={formData.isHidden}
+                  type="date"
+                  id="deadLine"
+                  name="deadLine"
+                  value={formData.deadLine}
                   onChange={handleInputChange}
+                  required
                 />
-                숨김
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="isMemberIssued"
-                  checked={formData.isMemberIssued}
-                  onChange={handleInputChange}
-                />
-                회원 발급
-              </label>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="form-actions">
             <button

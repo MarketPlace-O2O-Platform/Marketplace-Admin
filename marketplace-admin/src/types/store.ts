@@ -20,7 +20,17 @@ export type CreateStoreRequest = {
   phoneNumber: string;
   address: string;
   major: StoreMajor;
-  images?: File[];
+  images: File[];
+};
+
+export type UpdateStoreRequest = {
+  marketName: string;
+  description: string;
+  operationHours: string;
+  closedDays: string;
+  phoneNumber: string;
+  address: string;
+  major: StoreMajor;
 };
 
 export type Store = {
@@ -31,6 +41,7 @@ export type Store = {
   thumbnail: string;
   isFavorite: boolean;
   isNewCoupon: boolean;
+  major?: StoreMajor;
   pageIndex?: number;
 };
 
@@ -50,6 +61,7 @@ export type StoreDetail = {
   closedDays: string;
   phoneNumber: string;
   address: string;
+  major?: StoreMajor;
   imageResList: StoreImage[];
 };
 

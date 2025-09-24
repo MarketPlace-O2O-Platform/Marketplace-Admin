@@ -11,10 +11,46 @@
 }
 
 /* 헤더 네비게이션 */
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .header-navigation {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.store-id-badge {
+  font-size: 14px;
+  font-weight: 400;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+}
+
+.store-category-badge {
+  font-size: 14px;
+  font-weight: 500;
+  color: #059669;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .back-btn {
@@ -42,7 +78,7 @@
 
 /* 이미지 컨테이너 */
 .store-image-container {
-  height: 400px;
+  height: 250px;
   position: relative;
   overflow: hidden;
 }
@@ -262,6 +298,18 @@
   border-radius: 4px;
   font-size: 10px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.thumbnail-badge {
+  background: var(--primary-color);
+  color: white;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 600;
 }
 
 /* 버튼 스타일 */
@@ -310,6 +358,201 @@
 .btn--primary:hover {
   background-color: #2563eb;
   border-color: #2563eb;
+}
+
+/* 이미지 관리 스타일 */
+.detail-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.detail-group-header .btn {
+  margin-right: 16px;
+}
+
+.gallery-item.managing {
+  position: relative;
+  border: 2px solid #3b82f6;
+  transition: all 0.2s ease;
+  background: #f8fafc;
+}
+
+.gallery-item.managing:hover {
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.gallery-item.deleted {
+  opacity: 0.5;
+  border-color: var(--danger-color);
+}
+
+.gallery-item.new-image {
+  border: 2px dashed var(--success-color);
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  z-index: 2;
+}
+
+.image-sequence {
+  background: rgba(59, 130, 246, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  height: 25px;
+  display: flex;
+  align-items: center;
+}
+
+.thumbnail-badge {
+  background: rgba(16, 185, 129, 0.9);
+  color: white;
+  padding: 4px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  height: 25px;
+  display: flex;
+  align-items: center;
+
+}
+
+
+.image-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 12px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  border: 2px solid #d1d5db;
+  min-height: 60px;
+  width: 100%;
+  box-sizing: border-box;
+  visibility: visible;
+  opacity: 1;
+}
+
+.sequence-input {
+  width: 70px;
+  padding: 0.5rem;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  text-align: center;
+  background: white;
+  font-weight: 500;
+}
+
+.deleted-label {
+  font-size: 0.875rem;
+  color: var(--danger-color);
+  font-weight: 600;
+  text-align: center;
+}
+
+.image-management-controls {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.management-notice {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.management-notice p {
+  margin: 0 0 8px 0;
+  color: #92400e;
+  font-size: 14px;
+}
+
+.management-notice ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #92400e;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.management-notice li {
+  margin-bottom: 4px;
+}
+
+.file-input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-color);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.file-input:hover {
+  border-color: var(--primary-color);
+}
+
+.management-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.btn-xs {
+  padding: 8px 16px;
+  font-size: 13px;
+  min-height: 32px;
+  font-weight: 600;
+  border-width: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-success {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #059669;
+  border-color: #059669;
 }
 
 /* 반응형 디자인 */

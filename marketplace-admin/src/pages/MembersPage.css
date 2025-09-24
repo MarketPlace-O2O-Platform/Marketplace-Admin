@@ -1,0 +1,232 @@
+/* 메인 페이지 컨테이너 */
+.members-page {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* 검색 및 필터 영역 */
+.filters-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.search-box {
+  flex: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-color);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+  outline: none;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.filter-group label {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.role-filter {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-color);
+  color: var(--text-primary);
+  font-size: 14px;
+  min-width: 120px;
+}
+
+.role-filter:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+  outline: none;
+}
+
+/* 테이블 푸터 */
+.table-footer {
+  padding: 16px;
+  background: var(--bg-color);
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.results-info {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 14px;
+}
+
+.load-more {
+  text-align: center;
+  margin-top: 24px;
+}
+
+/* 빈 상태와 로딩 상태 */
+.loading,
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.error-message {
+  background: #fee2e2;
+  color: var(--danger-color);
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.members-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+}
+
+.members-table th {
+  background: var(--bg-tertiary);
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+}
+
+.members-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.members-table tbody tr:hover {
+  background: var(--bg-secondary);
+}
+
+.members-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.student-id {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.account {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.account-number {
+  font-family: monospace;
+  color: var(--text-secondary);
+}
+
+.cheer-ticket {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.created-at,
+.modified-at {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 1024px) {
+  .members-page {
+    padding: 16px;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .members-table {
+    min-width: 1000px;
+  }
+
+  .members-table th,
+  .members-table td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .filters-section {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    justify-content: flex-start;
+  }
+
+  .members-table {
+    min-width: 900px;
+  }
+}
+
+@media (max-width: 480px) {
+  .members-page {
+    padding: 12px;
+  }
+
+  .members-table th,
+  .members-table td {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+
+  .role-filter {
+    min-width: 100px;
+  }
+}

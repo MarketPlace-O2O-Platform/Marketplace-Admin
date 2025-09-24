@@ -43,6 +43,34 @@ export type CreateCouponRequest = {
   marketId: number;
 };
 
+// 증정쿠폰 생성 요청 타입
+export type CreateGiftCouponRequest = {
+  couponName: string;
+  description: string;
+  deadLine: string;
+  stock: number;
+};
+
+// 환급쿠폰 생성 요청 타입
+export type CreatePaybackCouponRequest = {
+  couponName: string;
+  description: string;
+};
+
+// 증정쿠폰 수정 요청 타입
+export type UpdateGiftCouponRequest = {
+  couponName: string;
+  description: string;
+  deadLine: string;
+  stock: number;
+};
+
+// 환급쿠폰 수정 요청 타입
+export type UpdatePaybackCouponRequest = {
+  couponName: string;
+  description: string;
+};
+
 export type UpdateCouponRequest = Partial<CreateCouponRequest>;
 
 export type CouponResponse = {

@@ -65,12 +65,12 @@ const GiftCouponList: React.FC<MarketCouponListProps> = ({ marketId, marketName 
   };
 
   const handleCouponClick = (couponId: number) => {
-    navigate(`/coupons/${couponId}`);
+    navigate(`/coupons/${couponId}?from=store&marketId=${marketId}`);
   };
 
   const handleEditCoupon = (couponId: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/coupons/${couponId}/edit`);
+    navigate(`/coupons/${couponId}/edit?from=store&marketId=${marketId}`);
   };
 
   const handleDeleteCoupon = async (couponId: number, e: React.MouseEvent) => {
@@ -86,6 +86,27 @@ const GiftCouponList: React.FC<MarketCouponListProps> = ({ marketId, marketName 
     } catch (err) {
       alert('증정쿠폰 삭제에 실패했습니다.');
       console.error('Failed to delete gift coupon:', err);
+    }
+  };
+
+  const handleToggleVisibility = async (couponId: number, isHidden: boolean, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const action = isHidden ? '공개' : '숨김';
+    if (!window.confirm(`이 증정쿠폰을 ${action} 처리하시겠습니까?`)) {
+      return;
+    }
+
+    try {
+      await couponApi.toggleGiftCouponVisibility(couponId);
+      setCoupons(prev => prev.map(coupon =>
+        coupon.couponId === couponId
+          ? { ...coupon, isHidden: !isHidden }
+          : coupon
+      ));
+      alert(`증정쿠폰이 ${action} 처리되었습니다.`);
+    } catch (err) {
+      alert(`증정쿠폰 ${action} 처리에 실패했습니다.`);
+      console.error('Failed to toggle gift coupon visibility:', err);
     }
   };
 
@@ -173,7 +194,7 @@ const GiftCouponList: React.FC<MarketCouponListProps> = ({ marketId, marketName 
                   onChange={(e) => handleSelectAll(e.target.checked)}
                 />
               </th>
-              <th>쿠폰 ID</th>
+              <th>순번</th>
               <th>쿠폰명</th>
               <th>설명</th>
               <th>재고</th>
@@ -183,7 +204,7 @@ const GiftCouponList: React.FC<MarketCouponListProps> = ({ marketId, marketName 
             </tr>
           </thead>
           <tbody>
-            {coupons.map((coupon) => (
+            {coupons.map((coupon, index) => (
               <tr
                 key={coupon.couponId}
                 className="coupon-row"
@@ -196,7 +217,7 @@ const GiftCouponList: React.FC<MarketCouponListProps> = ({ marketId, marketName 
                     onClick={(e) => e.stopPropagation()}
                   />
                 </td>
-                <td onClick={() => handleCouponClick(coupon.couponId)}>{coupon.couponId}</td>
+                <td onClick={() => handleCouponClick(coupon.couponId)}>{index + 1}</td>
                 <td className="coupon-name" onClick={() => handleCouponClick(coupon.couponId)}>{coupon.couponName}</td>
                 <td className="coupon-description" onClick={() => handleCouponClick(coupon.couponId)}>
                   <div className="description-content">
@@ -208,6 +229,13 @@ const GiftCouponList: React.FC<MarketCouponListProps> = ({ marketId, marketName 
                 <td onClick={() => handleCouponClick(coupon.couponId)}>{getStatusBadge(coupon)}</td>
                 <td className="action-cell">
                   <div className="action-buttons">
+                    <button
+                      className={`btn btn-sm ${coupon.isHidden ? 'btn-success' : 'btn-warning'}`}
+                      onClick={(e) => handleToggleVisibility(coupon.couponId, coupon.isHidden, e)}
+                      title={coupon.isHidden ? '공개' : '숨기기'}
+                    >
+                      {coupon.isHidden ? '👁️' : '👁️‍🗨️'}
+                    </button>
                     <button
                       className="btn btn-sm btn-secondary"
                       onClick={(e) => handleEditCoupon(coupon.couponId, e)}

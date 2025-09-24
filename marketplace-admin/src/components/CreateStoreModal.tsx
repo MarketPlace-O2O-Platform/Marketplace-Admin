@@ -5,7 +5,7 @@ import './CreateStoreModal.css';
 
 interface CreateStoreModalProps {
   onClose: () => void;
-  onSubmit: (data: CreateStoreRequest) => void;
+  onSubmit: (data: CreateStoreRequest) => Promise<void>;
 }
 
 const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }) => {
@@ -33,12 +33,22 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setFormData(prev => ({ ...prev, images: files }));
+    const newFiles = Array.from(e.target.files || []);
+    setFormData(prev => ({ ...prev, images: [...prev.images, ...newFiles] }));
 
     if (errors.images) {
       setErrors(prev => ({ ...prev, images: '' }));
     }
+
+    // 파일 입력 초기화하여 같은 파일을 다시 선택할 수 있게 함
+    e.target.value = '';
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, index) => index !== indexToRemove)
+    }));
   };
 
   const validateForm = (): boolean => {
@@ -80,9 +90,7 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
     setIsSubmitting(true);
 
     try {
-      // 실제 API 호출 시뮬레이션
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      onSubmit(formData);
+      await onSubmit(formData);
     } catch (error) {
       console.error('매장 생성 실패:', error);
     } finally {
@@ -239,13 +247,28 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
                 onChange={handleFileChange}
                 className={`form-file ${errors.images ? 'form-input--error' : ''}`}
               />
-              <p className="form-help">여러 이미지를 선택할 수 있습니다.</p>
+              <p className="form-help">여러 이미지를 선택하거나 한 번에 하나씩 추가할 수 있습니다.</p>
               {formData.images && formData.images.length > 0 && (
-                <div className="selected-files">
+                <div className="selected-images">
                   {Array.from(formData.images).map((file, index) => (
-                    <span key={index} className="file-name">
-                      {file.name}
-                    </span>
+                    <div key={index} className="selected-image-item">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`이미지 ${index + 1}`}
+                        className="selected-image-preview"
+                      />
+                      <div className="selected-image-info">
+                        <span className="image-name">{file.name}</span>
+                        <span className="image-order">#{index + 1}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="remove-image-btn"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}

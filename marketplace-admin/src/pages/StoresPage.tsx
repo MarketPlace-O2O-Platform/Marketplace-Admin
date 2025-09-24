@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import CreateStoreModal from '../components/CreateStoreModal';
-import type { Store } from '../types/store';
+import type { Store, CreateStoreRequest } from '../types/store';
+import { STORE_MAJOR_LABELS } from '../types/store';
 import { storeAPI } from '../api/store';
 import './StoresPage.css';
 
@@ -14,6 +15,7 @@ const StoresPage: React.FC = () => {
   const [hasNext, setHasNext] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; store: Store | null }>({ isOpen: false, store: null });
 
   const loadStores = async (cursor?: number, isLoadMore = false) => {
     try {
@@ -65,11 +67,18 @@ const StoresPage: React.FC = () => {
     setIsCreateModalOpen(false);
   };
 
-  const handleStoreCreated = (newStore: any) => {
-    console.log('새 매장 생성:', newStore);
-    setIsCreateModalOpen(false);
-    // 매장이 생성되면 목록을 다시 로드
-    loadStores();
+  const handleStoreCreated = async (data: CreateStoreRequest) => {
+    try {
+      await storeAPI.createStore(data);
+      setIsCreateModalOpen(false);
+      // 매장이 생성되면 목록을 다시 로드
+      loadStores();
+      setError('');
+    } catch (err: any) {
+      setError('매장 생성에 실패했습니다.');
+      console.error('매장 생성 실패:', err);
+      throw err; // 모달에서 에러 처리를 위해 다시 throw
+    }
   };
 
   const handleStoreDetail = (store: Store) => {
@@ -91,9 +100,31 @@ const StoresPage: React.FC = () => {
     }
   };
 
+  const handleDeleteStore = (store: Store) => {
+    setDeleteConfirm({ isOpen: true, store });
+  };
+
+  const confirmDeleteStore = async () => {
+    if (!deleteConfirm.store) return;
+
+    try {
+      await storeAPI.deleteStore(deleteConfirm.store.marketId);
+      setStores(prev => prev.filter(s => s.marketId !== deleteConfirm.store!.marketId));
+      setDeleteConfirm({ isOpen: false, store: null });
+      setError('');
+    } catch (err: any) {
+      setError('매장 삭제에 실패했습니다.');
+      console.error('매장 삭제 실패:', err);
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirm({ isOpen: false, store: null });
+  };
+
   return (
     <Layout>
-      <div className="page-container">
+      <div className="stores-page">
         <div className="page-header">
           <div className="page-header-content">
             <div>
@@ -119,91 +150,103 @@ const StoresPage: React.FC = () => {
           </div>
         </div>
 
-        {error && (
-          <div className="error-banner">
-            {error}
-          </div>
-        )}
+        {error && <div className="error-message">{error}</div>}
 
-        {loading && stores.length === 0 ? (
-          <div className="loading-container">
-            <p>매장 목록을 불러오는 중...</p>
-          </div>
-        ) : (
-          <>
-            <div className="table-container">
-              <table className="stores-table">
-                <thead>
-                  <tr>
-                    <th>순서</th>
-                    <th>매장명</th>
-                    <th>매장 설명</th>
-                    <th>주소</th>
-                    <th>상태</th>
-                    <th>작업</th>
+        <div className="table-container">
+          <table className="stores-table">
+            <thead>
+              <tr>
+                <th>순서</th>
+                <th>카테고리</th>
+                <th>대표사진</th>
+                <th>매장명</th>
+                <th>매장 설명</th>
+                <th>주소</th>
+                <th>작업</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading && stores.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="loading">매장 목록을 불러오는 중...</td>
+                </tr>
+              ) : filteredStores.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="empty-state">매장이 없습니다.</td>
+                </tr>
+              ) : (
+                filteredStores.map((store, index) => (
+                  <tr key={store.marketId} className="clickable-row" onClick={() => handleStoreDetail(store)}>
+                    <td>{store.pageIndex ?? index + 1}</td>
+                    <td>
+                      <span className="store-category">
+                        {store.major ? STORE_MAJOR_LABELS[store.major] : '-'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="store-thumbnail-small">
+                        {store.thumbnail ? (
+                          <img
+                            src={store.thumbnail.startsWith('http') ? store.thumbnail : `${import.meta.env.VITE_API_BASE_URL || 'https://marketplace.inuappcenter.kr'}/image/${store.thumbnail}`}
+                            alt={`${store.marketName} 대표사진`}
+                            className="thumbnail-image-small"
+                          />
+                        ) : (
+                          <div className="thumbnail-placeholder">
+                            <span>📷</span>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="store-name-cell">
+                        <span className="store-name-compact">{store.marketName}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="store-description-cell" title={store.marketDescription}>
+                        {store.marketDescription.length > 50
+                          ? `${store.marketDescription.substring(0, 50)}...`
+                          : store.marketDescription
+                        }
+                      </div>
+                    </td>
+                    <td>{store.address}</td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          className="btn btn-sm btn-secondary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleStoreDetail(store);
+                          }}
+                        >
+                          상세보기
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteStore(store);
+                          }}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {filteredStores.map((store, index) => (
-                    <tr key={store.marketId}>
-                      <td>{store.pageIndex ?? index + 1}</td>
-                      <td>
-                        <div className="store-name-cell">
-                          <span className="store-name">{store.marketName}</span>
-                          <span className="store-id">ID: {store.marketId}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="store-description-cell" title={store.marketDescription}>
-                          {store.marketDescription.length > 50
-                            ? `${store.marketDescription.substring(0, 50)}...`
-                            : store.marketDescription
-                          }
-                        </div>
-                      </td>
-                      <td>{store.address}</td>
-                      <td>
-                        <div className="store-status">
-                          {store.isFavorite && (
-                            <span className="status-badge status-badge--favorite">⭐</span>
-                          )}
-                          {store.isNewCoupon && (
-                            <span className="status-badge status-badge--coupon">🎫</span>
-                          )}
-                          {!store.isFavorite && !store.isNewCoupon && (
-                            <span className="status-badge status-badge--normal">-</span>
-                          )}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="action-buttons">
-                          <button
-                            className="btn btn--sm btn--secondary"
-                            onClick={() => handleStoreDetail(store)}
-                          >
-                            상세보기
-                          </button>
-                          <button className="btn btn--sm btn--danger">삭제</button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-            {hasNext && (
-              <div className="load-more-container">
-                <button
-                  className="btn btn--secondary load-more-btn"
-                  onClick={handleLoadMore}
-                  disabled={loading}
-                >
-                  {loading ? '로딩 중...' : '더 보기'}
-                </button>
-              </div>
-            )}
-          </>
+        {hasNext && !loading && (
+          <div className="load-more">
+            <button className="btn btn-outline-primary" onClick={handleLoadMore}>
+              더 보기
+            </button>
+          </div>
         )}
 
         <div className="table-footer">
@@ -217,6 +260,27 @@ const StoresPage: React.FC = () => {
             onClose={handleCloseModal}
             onSubmit={handleStoreCreated}
           />
+        )}
+
+        {deleteConfirm.isOpen && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h3>매장 삭제 확인</h3>
+              <p>
+                정말로 <strong>{deleteConfirm.store?.marketName}</strong> 매장을 삭제하시겠습니까?
+                <br />
+                삭제된 매장은 복구할 수 없습니다.
+              </p>
+              <div className="modal-actions">
+                <button className="btn btn--secondary" onClick={cancelDelete}>
+                  취소
+                </button>
+                <button className="btn btn--danger" onClick={confirmDeleteStore}>
+                  삭제
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </Layout>
