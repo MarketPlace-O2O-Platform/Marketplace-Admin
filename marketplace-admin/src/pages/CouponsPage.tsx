@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { couponApi } from '../api/coupon';
-import type { CouponListItem, CouponType } from '../types/coupon';
+import type { CouponListItem } from '../types/coupon';
 
 const CouponsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,9 +31,9 @@ const CouponsPage: React.FC = () => {
       }
 
       if (reset) {
-        setCoupons(response.response.couponResDtos);
+        setCoupons(response.response.couponResDtos as CouponListItem[]);
       } else {
-        setCoupons(prev => [...prev, ...response.response.couponResDtos]);
+        setCoupons(prev => [...prev, ...(response.response.couponResDtos as CouponListItem[])]);
       }
 
       setHasNext(response.response.hasNext);

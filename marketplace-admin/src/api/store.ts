@@ -43,7 +43,7 @@ export const storeAPI = {
 
     // 이미지 파일들 추가
     if (data.images && data.images.length > 0) {
-      data.images.forEach((image, index) => {
+      data.images.forEach((image) => {
         formData.append('images', image);
       });
     }

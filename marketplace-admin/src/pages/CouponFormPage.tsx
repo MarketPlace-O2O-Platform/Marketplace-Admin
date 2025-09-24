@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { couponApi } from '../api/coupon';
 import { storeAPI } from '../api/store';
-import type { CreateGiftCouponRequest, CreatePaybackCouponRequest, CouponType } from '../types/coupon';
+import type { CouponType } from '../types/coupon';
 import type { Store } from '../types/store';
 
 const CouponFormPage: React.FC = () => {
@@ -60,8 +60,8 @@ const CouponFormPage: React.FC = () => {
       setFormData({
         couponName: coupon.couponName,
         description: coupon.couponDescription,
-        deadLine: coupon.deadLine ? coupon.deadLine.split('T')[0] : '', // Convert to date format for input
-        stock: coupon.stock || 0,
+        deadLine: (coupon as any).deadLine ? (coupon as any).deadLine.split('T')[0] : '', // Convert to date format for input
+        stock: (coupon as any).stock || 0,
         couponType: coupon.couponType,
         marketId: coupon.marketId
       });

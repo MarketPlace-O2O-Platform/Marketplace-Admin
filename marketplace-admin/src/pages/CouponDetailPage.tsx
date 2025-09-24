@@ -118,23 +118,8 @@ const CouponDetailPage: React.FC = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('ko-KR');
-  };
-
   const formatDateOnly = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ko-KR');
-  };
-
-  const getStatusBadge = (coupon: Coupon | PaybackCoupon) => {
-    // 환급쿠폰의 경우 isAvailable 필드가 없음
-    if ('isAvailable' in coupon && !coupon.isAvailable) {
-      return <span className="badge badge-danger">비활성</span>;
-    }
-    if (coupon.isHidden) {
-      return <span className="badge badge-warning">숨김</span>;
-    }
-    return <span className="badge badge-success">활성</span>;
   };
 
   const getUsageRate = (coupon: Coupon) => {

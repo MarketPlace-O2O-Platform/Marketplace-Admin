@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import type { StoreDetail, StoreMajor, UpdateStoreRequest } from '../types/store';
+import React, { useState } from 'react';
+import type { StoreDetail, UpdateStoreRequest } from '../types/store';
 import { STORE_MAJOR_LABELS } from '../types/store';
 import './EditStoreModal.css';
 

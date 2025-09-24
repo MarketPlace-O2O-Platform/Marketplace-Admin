@@ -5,10 +5,8 @@ import type {
   CouponListParams,
   PaybackCouponListResponse,
   PaybackCouponResponse,
-  CreateCouponRequest,
   CreateGiftCouponRequest,
   CreatePaybackCouponRequest,
-  UpdateCouponRequest,
   UpdateGiftCouponRequest,
   UpdatePaybackCouponRequest
 } from '../types/coupon';
