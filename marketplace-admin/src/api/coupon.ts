@@ -1,0 +1,95 @@
+import { apiClient } from './config';
+import type {
+  CouponResponse,
+  CouponListResponse,
+  CouponListParams,
+  PaybackCouponListResponse,
+  PaybackCouponResponse,
+  CreateCouponRequest,
+  UpdateCouponRequest
+} from '../types/coupon';
+
+export const couponApi = {
+  // 쿠폰 목록 조회 (전체)
+  getCoupons: async (params: CouponListParams = {}): Promise<CouponListResponse> => {
+    const { pageSize = 30, cursor, couponType, marketId } = params;
+    const queryParams = new URLSearchParams();
+
+    queryParams.append('pageSize', pageSize.toString());
+    if (cursor) queryParams.append('cursor', cursor.toString());
+    if (couponType) queryParams.append('couponType', couponType);
+    if (marketId) queryParams.append('marketId', marketId.toString());
+
+    const response = await apiClient.get(`/admins/coupons?${queryParams.toString()}`);
+    return response.data;
+  },
+
+  // 특정 쿠폰 조회
+  getCoupon: async (couponId: number): Promise<CouponResponse> => {
+    const response = await apiClient.get(`/admins/coupons/${couponId}`);
+    return response.data;
+  },
+
+  // 쿠폰 생성
+  createCoupon: async (data: CreateCouponRequest): Promise<CouponResponse> => {
+    const response = await apiClient.post('/admins/coupons', data);
+    return response.data;
+  },
+
+  // 쿠폰 수정
+  updateCoupon: async (couponId: number, data: UpdateCouponRequest): Promise<CouponResponse> => {
+    const response = await apiClient.put(`/admins/coupons/${couponId}`, data);
+    return response.data;
+  },
+
+  // 쿠폰 삭제
+  deleteCoupon: async (couponId: number): Promise<{ message: string }> => {
+    const response = await apiClient.delete(`/admins/coupons/${couponId}`);
+    return response.data;
+  },
+
+  // 환급쿠폰 목록 조회
+  getPaybackCoupons: async (params: CouponListParams = {}): Promise<PaybackCouponListResponse> => {
+    const { pageSize = 30, cursor, marketId } = params;
+    const queryParams = new URLSearchParams();
+
+    queryParams.append('pageSize', pageSize.toString());
+    if (cursor) queryParams.append('cursor', cursor.toString());
+    if (marketId) queryParams.append('marketId', marketId.toString());
+
+    const response = await apiClient.get(`/admins/coupons/payback?${queryParams.toString()}`);
+    return response.data;
+  },
+
+  // 매장별 쿠폰 목록 조회 (증정쿠폰)
+  getCouponsByMarket: async (marketId: number, params: Omit<CouponListParams, 'marketId'> = {}): Promise<CouponListResponse> => {
+    return couponApi.getCoupons({ ...params, marketId });
+  },
+
+  // 매장별 환급쿠폰 목록 조회
+  getPaybackCouponsByMarket: async (marketId: number, params: Omit<CouponListParams, 'marketId'> = {}): Promise<PaybackCouponListResponse> => {
+    return couponApi.getPaybackCoupons({ ...params, marketId });
+  },
+
+  // 환급쿠폰 상세 조회
+  getPaybackCoupon: async (couponId: number): Promise<PaybackCouponResponse> => {
+    const response = await apiClient.get(`/admins/coupons/payback/${couponId}`);
+    return response.data;
+  },
+
+  // 증정쿠폰 일괄 삭제
+  deleteCoupons: async (couponIds: number[]): Promise<{ message: string }> => {
+    const response = await apiClient.delete('/admins/coupons/batch', {
+      data: { list: couponIds }
+    });
+    return response.data;
+  },
+
+  // 환급쿠폰 일괄 삭제
+  deletePaybackCoupons: async (couponIds: number[]): Promise<{ message: string }> => {
+    const response = await apiClient.delete('/admins/coupons/payback/batch', {
+      data: { list: couponIds }
+    });
+    return response.data;
+  }
+};
