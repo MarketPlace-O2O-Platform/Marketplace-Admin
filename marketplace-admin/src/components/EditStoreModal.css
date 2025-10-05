@@ -106,6 +106,16 @@
     grid-template-columns: 1fr;
   }
 
+  .form-group > div[style*="display: flex"] {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group > div[style*="display: flex"] button {
+    width: 100%;
+    padding: 0.75rem !important;
+  }
+
   .modal-actions {
     flex-direction: column-reverse;
   }

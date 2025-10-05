@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import LoginPage from './pages/LoginPage';
 import MembersPage from './pages/MembersPage';
 import StoresPage from './pages/StoresPage';
@@ -8,10 +9,18 @@ import CouponDetailPage from './pages/CouponDetailPage';
 import CouponFormPage from './pages/CouponFormPage';
 import PrivateRoute from './components/PrivateRoute';
 import { authUtils } from './utils/auth';
+import { loadKakaoMapScript } from './utils/kakaoMap';
 import './App.css';
 
 function App() {
   const isAuthenticated = authUtils.isAuthenticated();
+
+  useEffect(() => {
+    // 카카오 맵 스크립트 로드
+    loadKakaoMapScript().catch((error) => {
+      console.error('카카오 맵 API 로드 실패:', error);
+    });
+  }, []);
 
   return (
     <Router>

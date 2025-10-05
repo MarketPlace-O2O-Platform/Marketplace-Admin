@@ -6,8 +6,42 @@
 .main-content {
   flex: 1;
   margin-left: 240px;
+  padding: 20px;
   background-color: var(--bg-secondary);
   min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+.layout.sidebar-collapsed .main-content {
+  margin-left: 70px;
+}
+
+.main-header {
+  margin-bottom: 20px;
+}
+
+.hamburger-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hamburger-btn:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.hamburger-line {
+  width: 20px;
+  height: 2px;
+  background-color: var(--text-primary);
+  border-radius: 2px;
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 768px) {
@@ -17,5 +51,10 @@
 
   .main-content {
     margin-left: 0;
+    padding: 16px;
+  }
+
+  .main-header {
+    display: none;
   }
 }

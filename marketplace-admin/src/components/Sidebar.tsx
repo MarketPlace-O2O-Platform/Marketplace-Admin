@@ -66,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
 
       <div className="sidebar-footer">
         <button onClick={handleLogout} className="logout-btn" title={collapsed ? '로그아웃' : ''}>
-          <span className="logout-icon">🚪</span>
+          <span className="logout-icon">↩</span>
           {!collapsed && <span>로그아웃</span>}
         </button>
       </div>

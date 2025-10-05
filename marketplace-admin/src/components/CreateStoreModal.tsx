@@ -22,6 +22,8 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [showSearchModal, setShowSearchModal] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -30,6 +32,72 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+  };
+
+  const handleAddressSearch = () => {
+    new (window as any).daum.Postcode({
+      oncomplete: function(data: any) {
+        // 도로명 주소나 지번 주소를 선택
+        const fullAddress = data.roadAddress || data.jibunAddress;
+        setFormData(prev => ({ ...prev, address: fullAddress }));
+
+        // 주소 에러 제거
+        if (errors.address) {
+          setErrors(prev => ({ ...prev, address: '' }));
+        }
+      }
+    }).open();
+  };
+
+  const handleSearchByStoreName = () => {
+    if (!formData.marketName.trim()) {
+      alert('매장명을 먼저 입력해주세요.');
+      return;
+    }
+
+    const searchWithKakao = () => {
+      const kakao = (window as any).kakao;
+      if (!kakao || !kakao.maps || !kakao.maps.services) {
+        return false;
+      }
+
+      const ps = new kakao.maps.services.Places();
+
+      ps.keywordSearch(formData.marketName, (data: any[], status: any) => {
+        if (status === kakao.maps.services.Status.OK && data.length > 0) {
+          setSearchResults(data);
+          setShowSearchModal(true);
+        } else {
+          alert('해당 매장을 찾을 수 없습니다. 다른 검색어를 입력해주세요.');
+        }
+      });
+      return true;
+    };
+
+    // 바로 시도
+    if (searchWithKakao()) {
+      return;
+    }
+
+    // 실패시 잠시 대기 후 재시도
+    setTimeout(() => {
+      if (!searchWithKakao()) {
+        alert('카카오 지도 API를 불러오는데 실패했습니다. 페이지를 새로고침 후 다시 시도해주세요.');
+      }
+    }, 1000);
+  };
+
+  const handleSelectPlace = (place: any) => {
+    const address = place.road_address_name || place.address_name;
+    setFormData(prev => ({ ...prev, address: address }));
+
+    // 주소 에러 제거
+    if (errors.address) {
+      setErrors(prev => ({ ...prev, address: '' }));
+    }
+
+    setShowSearchModal(false);
+    setSearchResults([]);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,14 +173,15 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
   };
 
   return (
-    <div className="modal-overlay" onClick={handleOverlayClick}>
-      <div className="modal-container">
-        <div className="modal-header">
-          <h2 className="modal-title">새 매장 등록</h2>
-          <button className="modal-close-btn" onClick={onClose}>
-            ✕
-          </button>
-        </div>
+    <>
+      <div className="modal-overlay" onClick={handleOverlayClick}>
+        <div className="modal-container">
+          <div className="modal-header">
+            <h2 className="modal-title">새 매장 등록</h2>
+            <button className="modal-close-btn" onClick={onClose}>
+              ✕
+            </button>
+          </div>
 
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-grid">
@@ -120,14 +189,24 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
               <label className="form-label">
                 매장명 <span className="required">*</span>
               </label>
-              <input
-                type="text"
-                name="marketName"
-                value={formData.marketName}
-                onChange={handleInputChange}
-                className={`form-input ${errors.marketName ? 'form-input--error' : ''}`}
-                placeholder="매장명을 입력하세요"
-              />
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  name="marketName"
+                  value={formData.marketName}
+                  onChange={handleInputChange}
+                  className={`form-input ${errors.marketName ? 'form-input--error' : ''}`}
+                  placeholder="매장명을 입력하세요"
+                />
+                <button
+                  type="button"
+                  onClick={handleSearchByStoreName}
+                  className="btn btn--secondary"
+                  style={{ whiteSpace: 'nowrap', padding: '0 16px' }}
+                >
+                  매장 검색
+                </button>
+              </div>
               {errors.marketName && (
                 <span className="form-error">{errors.marketName}</span>
               )}
@@ -229,8 +308,9 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
                 value={formData.address}
                 onChange={handleInputChange}
                 className={`form-input ${errors.address ? 'form-input--error' : ''}`}
-                placeholder="전체 주소를 입력하세요"
+                placeholder="매장명으로 검색하거나 직접 입력하세요"
               />
+              <p className="form-help">* 해당 주소로 어플 내 지도에 표시됩니다. 정확한 주소를 입력해주세요. (카카오맵 API 사용)</p>
               {errors.address && (
                 <span className="form-error">{errors.address}</span>
               )}
@@ -298,6 +378,93 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
         </form>
       </div>
     </div>
+
+    {/* 매장 검색 결과 모달 */}
+    {showSearchModal && (
+      <div
+        className="modal-overlay"
+        onClick={() => setShowSearchModal(false)}
+        style={{
+          zIndex: 1001,
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <div
+          className="modal-container"
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            maxWidth: '600px',
+            width: '90%',
+            maxHeight: '80vh',
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            overflow: 'hidden'
+          }}
+        >
+          <div className="modal-header">
+            <h2 className="modal-title">매장 검색 결과 ({searchResults.length}개)</h2>
+            <button className="modal-close-btn" onClick={() => setShowSearchModal(false)}>
+              ✕
+            </button>
+          </div>
+          <div style={{ padding: '20px', maxHeight: '60vh', overflowY: 'auto' }}>
+            {searchResults.length > 0 ? (
+              searchResults.map((place, index) => (
+                <div
+                  key={place.id || index}
+                  style={{
+                    padding: '16px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    marginBottom: '12px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    backgroundColor: 'white'
+                  }}
+                  onClick={() => handleSelectPlace(place)}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                >
+                  <div style={{ fontWeight: '600', fontSize: '16px', marginBottom: '8px', color: '#1e293b' }}>
+                    {place.place_name}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#64748b', marginBottom: '4px' }}>
+                    📍 {place.road_address_name || place.address_name}
+                  </div>
+                  {place.category_name && (
+                    <div style={{ fontSize: '12px', color: '#94a3b8' }}>
+                      🏷️ {place.category_name}
+                    </div>
+                  )}
+                  {place.phone && (
+                    <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
+                      📞 {place.phone}
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div style={{
+                textAlign: 'center',
+                padding: '40px 20px',
+                color: '#94a3b8'
+              }}>
+                검색 결과가 없습니다.
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+  </>
   );
 };
 
