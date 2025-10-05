@@ -6,22 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f90b42fd-ecaf-47c9-b70e-833529ecab6b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/api/coupon.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/api/coupon.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/api/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/api/store.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/CreateStoreModal.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/CreateStoreModal.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/CreateStoreModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/CreateStoreModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/MarketCouponList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/MarketCouponList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/PaybackCouponList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/PaybackCouponList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/CouponDetailPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/CouponDetailPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/CouponFormPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/CouponFormPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/CouponsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/CouponsPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/StoreDetailPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/StoreDetailPage.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/StoreDetailPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/StoreDetailPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/types/coupon.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/types/coupon.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/types/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/types/store.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,18 +17,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "82everywin"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;82everywin&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/MarketPlace-O2O-Platform/Marketplace-Admin.git",
-    "accountId": "c4899c80-3f1a-4821-b050-6347e04d5cf1"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/MarketPlace-O2O-Platform/Marketplace-Admin.git&quot;,
+    &quot;accountId&quot;: &quot;c4899c80-3f1a-4821-b050-6347e04d5cf1&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
@@ -84,7 +70,9 @@
       <workItem from="1757868603371" duration="3855000" />
       <workItem from="1757872475915" duration="2732000" />
       <workItem from="1758646011102" duration="6177000" />
-      <workItem from="1758712806931" duration="19317000" />
+      <workItem from="1758712806931" duration="20902000" />
+      <workItem from="1758820169939" duration="359000" />
+      <workItem from="1759650506359" duration="371000" />
     </task>
     <servers />
   </component>
