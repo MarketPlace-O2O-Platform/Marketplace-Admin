@@ -1,5 +1,5 @@
 import { apiClient } from './config';
-import type { StoreListResponse, StoreListParams, StoreDetailResponse, UpdateStoreRequest, CreateStoreRequest } from '../types/store';
+import type { StoreListResponse, StoreListParams, StoreDetailResponse, UpdateStoreRequest, CreateStoreRequest, UpdateStoresOrderRequest } from '../types/store';
 
 export const storeAPI = {
   getStores: async (params: StoreListParams = {}): Promise<StoreListResponse> => {
@@ -104,6 +104,14 @@ export const storeAPI = {
           'Content-Type': 'multipart/form-data',
         },
       }
+    );
+    return response.data;
+  },
+
+  updateStoresOrder: async (data: UpdateStoresOrderRequest): Promise<{ message: string }> => {
+    const response = await apiClient.patch<{ message: string }>(
+      '/admins/markets/order',
+      data
     );
     return response.data;
   }

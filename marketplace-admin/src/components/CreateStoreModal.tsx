@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { CreateStoreRequest } from '../types/store';
+import type { KakaoPlace } from '../types/kakao';
 import { STORE_MAJOR_LABELS } from '../types/store';
 import './CreateStoreModal.css';
 
@@ -22,7 +23,7 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<KakaoPlace[]>([]);
   const [showSearchModal, setShowSearchModal] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -41,14 +42,14 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
     }
 
     const searchWithKakao = () => {
-      const kakao = (window as any).kakao;
+      const kakao = window.kakao;
       if (!kakao || !kakao.maps || !kakao.maps.services) {
         return false;
       }
 
       const ps = new kakao.maps.services.Places();
 
-      ps.keywordSearch(formData.marketName, (data: any[], status: any) => {
+      ps.keywordSearch(formData.marketName, (data: KakaoPlace[], status: string) => {
         if (status === kakao.maps.services.Status.OK && data.length > 0) {
           setSearchResults(data);
           setShowSearchModal(true);
@@ -72,7 +73,7 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
     }, 1000);
   };
 
-  const handleSelectPlace = (place: any) => {
+  const handleSelectPlace = (place: KakaoPlace) => {
     const address = place.road_address_name || place.address_name;
     setFormData(prev => ({ ...prev, address: address }));
 

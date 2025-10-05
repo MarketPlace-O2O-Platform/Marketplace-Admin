@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import type { DropResult } from '@hello-pangea/dnd';
 import Layout from '../components/Layout';
 import CreateStoreModal from '../components/CreateStoreModal';
-import type { Store, CreateStoreRequest } from '../types/store';
+import type { Store, CreateStoreRequest, UpdateStoresOrderRequest } from '../types/store';
 import { STORE_MAJOR_LABELS } from '../types/store';
 import { storeAPI } from '../api/store';
 import './StoresPage.css';
@@ -15,6 +17,8 @@ const StoresPage: React.FC = () => {
   const [hasNext, setHasNext] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingStores, setEditingStores] = useState<Store[]>([]);
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; store: Store | null }>({ isOpen: false, store: null });
 
   const loadStores = async (cursor?: number, isLoadMore = false) => {
@@ -122,6 +126,53 @@ const StoresPage: React.FC = () => {
     setDeleteConfirm({ isOpen: false, store: null });
   };
 
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const items = Array.from(editingStores);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setEditingStores(items);
+  };
+
+  const handleSaveOrder = async () => {
+    try {
+      const orderData: UpdateStoresOrderRequest = editingStores.map((store, index) => ({
+        marketId: store.marketId,
+        orderNo: index + 1
+      }));
+      await storeAPI.updateStoresOrder(orderData);
+      setIsEditMode(false);
+      loadStores(); // 순서 저장 후 목록 새로고침
+      setError('');
+    } catch (err) {
+      setError('노출 순서 변경에 실패했습니다.');
+      console.error('노출 순서 변경 실패:', err);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditMode(false);
+    setEditingStores([]);
+  };
+
+  const handleStartEdit = () => {
+    setIsEditMode(true);
+    setEditingStores(sortedStores);
+  };
+
+  // 노출 순서대로 정렬된 매장 목록
+  const sortedStores = [...filteredStores].sort((a, b) => {
+    if (a.orderNo === undefined && b.orderNo === undefined) return 0;
+    if (a.orderNo === undefined) return 1;
+    if (b.orderNo === undefined) return -1;
+    return a.orderNo - b.orderNo;
+  });
+
+  // 표시할 매장 목록 (편집 모드일 때는 editingStores 사용)
+  const displayStores = isEditMode ? editingStores : sortedStores;
+
   return (
     <Layout>
       <div className="stores-page">
@@ -131,10 +182,28 @@ const StoresPage: React.FC = () => {
               <h1 className="page-title">매장관리</h1>
               <p className="page-description">등록된 매장을 관리하고 새로운 매장을 추가합니다.</p>
             </div>
-            <button className="btn btn--primary" onClick={handleCreateStore}>
-              <span>+</span>
-              매장 등록
-            </button>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              {isEditMode ? (
+                <>
+                  <button className="btn btn--secondary" onClick={handleCancelEdit}>
+                    취소
+                  </button>
+                  <button className="btn btn--primary" onClick={handleSaveOrder}>
+                    순서 저장
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button className="btn btn--secondary" onClick={handleStartEdit}>
+                    노출 순서 편집
+                  </button>
+                  <button className="btn btn--primary" onClick={handleCreateStore}>
+                    <span>+</span>
+                    매장 등록
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
@@ -152,94 +221,134 @@ const StoresPage: React.FC = () => {
 
         {error && <div className="error-message">{error}</div>}
 
-        <div className="table-container">
-          <table className="stores-table">
-            <thead>
-              <tr>
-                <th>순서</th>
-                <th>카테고리</th>
-                <th>대표사진</th>
-                <th>매장명</th>
-                <th>매장 설명</th>
-                <th>주소</th>
-                <th>작업</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading && stores.length === 0 ? (
+        {isEditMode && (
+          <div className="edit-mode-notice">
+            <span>📝 드래그하여 매장 순서를 변경하세요</span>
+          </div>
+        )}
+
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="table-container">
+            <table className="stores-table">
+              <thead>
                 <tr>
-                  <td colSpan={7} className="loading">매장 목록을 불러오는 중...</td>
+                  {isEditMode && <th style={{ width: '40px' }}>⋮⋮</th>}
+                  <th>순서</th>
+                  <th>카테고리</th>
+                  <th>대표사진</th>
+                  <th>매장명</th>
+                  <th>매장 설명</th>
+                  <th>주소</th>
+                  {!isEditMode && <th>작업</th>}
                 </tr>
-              ) : filteredStores.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="empty-state">매장이 없습니다.</td>
-                </tr>
-              ) : (
-                filteredStores.map((store, index) => (
-                  <tr key={store.marketId} className="clickable-row" onClick={() => handleStoreDetail(store)}>
-                    <td>{store.pageIndex ?? index + 1}</td>
-                    <td>
-                      <span className="store-category">
-                        {store.major ? STORE_MAJOR_LABELS[store.major] : '-'}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="store-thumbnail-small">
-                        {store.thumbnail ? (
-                          <img
-                            src={store.thumbnail.startsWith('http') ? store.thumbnail : `${import.meta.env.VITE_API_BASE_URL || 'https://marketplace.inuappcenter.kr'}/image/${store.thumbnail}`}
-                            alt={`${store.marketName} 대표사진`}
-                            className="thumbnail-image-small"
-                          />
-                        ) : (
-                          <div className="thumbnail-placeholder">
-                            <span>📷</span>
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="store-name-cell">
-                        <span className="store-name-compact">{store.marketName}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="store-description-cell" title={store.marketDescription}>
-                        {store.marketDescription.length > 50
-                          ? `${store.marketDescription.substring(0, 50)}...`
-                          : store.marketDescription
-                        }
-                      </div>
-                    </td>
-                    <td>{store.address}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          className="btn btn-sm btn-secondary"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleStoreDetail(store);
-                          }}
+              </thead>
+              <Droppable droppableId="stores" isDropDisabled={!isEditMode}>
+                {(provided) => (
+                  <tbody {...provided.droppableProps} ref={provided.innerRef}>
+                    {loading && stores.length === 0 ? (
+                      <tr>
+                        <td colSpan={isEditMode ? 7 : 8} className="loading">매장 목록을 불러오는 중...</td>
+                      </tr>
+                    ) : displayStores.length === 0 ? (
+                      <tr>
+                        <td colSpan={isEditMode ? 7 : 8} className="empty-state">매장이 없습니다.</td>
+                      </tr>
+                    ) : (
+                      displayStores.map((store, index) => (
+                        <Draggable
+                          key={store.marketId}
+                          draggableId={store.marketId.toString()}
+                          index={index}
+                          isDragDisabled={!isEditMode}
                         >
-                          상세보기
-                        </button>
-                        <button
-                          className="btn btn-sm btn-danger"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteStore(store);
-                          }}
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                          {(provided, snapshot) => (
+                            <tr
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...(isEditMode ? provided.dragHandleProps : {})}
+                              className={`${!isEditMode ? 'clickable-row' : ''} ${snapshot.isDragging ? 'dragging-row' : ''}`}
+                              onClick={!isEditMode ? () => handleStoreDetail(store) : undefined}
+                              style={{
+                                ...provided.draggableProps.style,
+                                cursor: isEditMode ? 'grab' : 'pointer'
+                              }}
+                            >
+                              {isEditMode && (
+                                <td className="drag-handle-cell">
+                                  <div className="drag-handle-icon">⋮⋮</div>
+                                </td>
+                              )}
+                              <td>{index + 1}</td>
+                              <td>
+                                <span className="store-category">
+                                  {store.major ? STORE_MAJOR_LABELS[store.major] : '-'}
+                                </span>
+                              </td>
+                              <td>
+                                <div className="store-thumbnail-small">
+                                  {store.thumbnail ? (
+                                    <img
+                                      src={store.thumbnail.startsWith('http') ? store.thumbnail : `${import.meta.env.VITE_API_BASE_URL || 'https://marketplace.inuappcenter.kr'}/image/${store.thumbnail}`}
+                                      alt={`${store.marketName} 대표사진`}
+                                      className="thumbnail-image-small"
+                                    />
+                                  ) : (
+                                    <div className="thumbnail-placeholder">
+                                      <span>📷</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </td>
+                              <td>
+                                <div className="store-name-cell">
+                                  <span className="store-name-compact">{store.marketName}</span>
+                                </div>
+                              </td>
+                              <td>
+                                <div className="store-description-cell" title={store.marketDescription}>
+                                  {store.marketDescription.length > 50
+                                    ? `${store.marketDescription.substring(0, 50)}...`
+                                    : store.marketDescription
+                                  }
+                                </div>
+                              </td>
+                              <td>{store.address}</td>
+                              {!isEditMode && (
+                                <td>
+                                  <div className="action-buttons">
+                                    <button
+                                      className="btn btn-sm btn-secondary"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleStoreDetail(store);
+                                      }}
+                                    >
+                                      상세보기
+                                    </button>
+                                    <button
+                                      className="btn btn-sm btn-danger"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteStore(store);
+                                      }}
+                                    >
+                                      삭제
+                                    </button>
+                                  </div>
+                                </td>
+                              )}
+                            </tr>
+                          )}
+                        </Draggable>
+                      ))
+                    )}
+                    {provided.placeholder}
+                  </tbody>
+                )}
+              </Droppable>
+            </table>
+          </div>
+        </DragDropContext>
 
         {hasNext && !loading && (
           <div className="load-more">
@@ -251,7 +360,7 @@ const StoresPage: React.FC = () => {
 
         <div className="table-footer">
           <p className="results-info">
-            총 {filteredStores.length}개의 매장
+            총 {displayStores.length}개의 매장
           </p>
         </div>
 

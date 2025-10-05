@@ -43,6 +43,7 @@ export type Store = {
   isNewCoupon: boolean;
   major?: StoreMajor;
   pageIndex?: number;
+  orderNo?: number;
 };
 
 // 상세보기용 이미지 타입
@@ -83,6 +84,13 @@ export type StoreListParams = {
   pageSize?: number;
   cursor?: number; // 실제로는 lastPageIndex로 전송됨 (마지막 매장의 marketId)
 };
+
+export type StoreOrderItem = {
+  marketId: number;
+  orderNo: number;
+};
+
+export type UpdateStoresOrderRequest = StoreOrderItem[];
 
 export const STORE_MAJOR_LABELS: Record<StoreMajor, string> = {
   FOOD: '음식점',

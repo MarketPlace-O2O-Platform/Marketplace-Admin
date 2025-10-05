@@ -6,16 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="f90b42fd-ecaf-47c9-b70e-833529ecab6b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/.env" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/CreateStoreModal.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/CreateStoreModal.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/api/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/api/store.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/CreateStoreModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/CreateStoreModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/EditStoreModal.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/EditStoreModal.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/EditStoreModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/EditStoreModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/Layout.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/Layout.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/types/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/types/store.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +78,7 @@
       <workItem from="1758646011102" duration="6177000" />
       <workItem from="1758712806931" duration="20902000" />
       <workItem from="1758820169939" duration="359000" />
-      <workItem from="1759650506359" duration="8822000" />
+      <workItem from="1759650506359" duration="13572000" />
     </task>
     <servers />
   </component>

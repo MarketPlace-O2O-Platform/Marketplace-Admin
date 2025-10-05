@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { StoreDetail, UpdateStoreRequest } from '../types/store';
+import type { KakaoPlace } from '../types/kakao';
 import { STORE_MAJOR_LABELS } from '../types/store';
 import './EditStoreModal.css';
 
@@ -20,7 +21,7 @@ const EditStoreModal: React.FC<EditStoreModalProps> = ({ store, onClose, onSubmi
     major: store.major || 'ETC'
   });
 
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<KakaoPlace[]>([]);
   const [showSearchModal, setShowSearchModal] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -35,14 +36,14 @@ const EditStoreModal: React.FC<EditStoreModalProps> = ({ store, onClose, onSubmi
     }
 
     const searchWithKakao = () => {
-      const kakao = (window as any).kakao;
+      const kakao = window.kakao;
       if (!kakao || !kakao.maps || !kakao.maps.services) {
         return false;
       }
 
       const ps = new kakao.maps.services.Places();
 
-      ps.keywordSearch(formData.marketName, (data: any[], status: any) => {
+      ps.keywordSearch(formData.marketName, (data: KakaoPlace[], status: string) => {
         if (status === kakao.maps.services.Status.OK && data.length > 0) {
           setSearchResults(data);
           setShowSearchModal(true);
@@ -66,7 +67,7 @@ const EditStoreModal: React.FC<EditStoreModalProps> = ({ store, onClose, onSubmi
     }, 1000);
   };
 
-  const handleSelectPlace = (place: any) => {
+  const handleSelectPlace = (place: KakaoPlace) => {
     const address = place.road_address_name || place.address_name;
     setFormData(prev => ({ ...prev, address: address }));
 
@@ -227,7 +228,7 @@ const EditStoreModal: React.FC<EditStoreModalProps> = ({ store, onClose, onSubmi
             <button className="close-btn" onClick={() => setShowSearchModal(false)}>×</button>
           </div>
           <div style={{ padding: '20px', maxHeight: '500px', overflowY: 'auto' }}>
-            {searchResults.map((place, index) => (
+            {searchResults.map((place) => (
               <div
                 key={place.id}
                 style={{
