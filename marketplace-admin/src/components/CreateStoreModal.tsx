@@ -34,21 +34,6 @@ const CreateStoreModal: React.FC<CreateStoreModalProps> = ({ onClose, onSubmit }
     }
   };
 
-  const handleAddressSearch = () => {
-    new (window as any).daum.Postcode({
-      oncomplete: function(data: any) {
-        // 도로명 주소나 지번 주소를 선택
-        const fullAddress = data.roadAddress || data.jibunAddress;
-        setFormData(prev => ({ ...prev, address: fullAddress }));
-
-        // 주소 에러 제거
-        if (errors.address) {
-          setErrors(prev => ({ ...prev, address: '' }));
-        }
-      }
-    }).open();
-  };
-
   const handleSearchByStoreName = () => {
     if (!formData.marketName.trim()) {
       alert('매장명을 먼저 입력해주세요.');
