@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f90b42fd-ecaf-47c9-b70e-833529ecab6b" name="Changes" comment="" />
+    <list default="true" id="f90b42fd-ecaf-47c9-b70e-833529ecab6b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.tsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -70,7 +73,7 @@
       <workItem from="1758820169939" duration="359000" />
       <workItem from="1759650506359" duration="16635000" />
       <workItem from="1760038330293" duration="10000" />
-      <workItem from="1760861066989" duration="2135000" />
+      <workItem from="1760861066989" duration="2310000" />
     </task>
     <servers />
   </component>

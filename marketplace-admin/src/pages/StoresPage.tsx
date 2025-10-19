@@ -26,7 +26,7 @@ const StoresPage: React.FC = () => {
       console.log('loadStores 호출:', { cursor, isLoadMore });
       if (!isLoadMore) setLoading(true);
 
-      const response = await storeAPI.getStores({ pageSize: 20, cursor });
+      const response = await storeAPI.getStores({ pageSize: 50, cursor });
       console.log('API 응답:', response);
 
       if (isLoadMore) {
