@@ -3,7 +3,7 @@ import type { StoreListResponse, StoreListParams, StoreDetailResponse, UpdateSto
 
 export const storeAPI = {
   getStores: async (params: StoreListParams = {}): Promise<StoreListResponse> => {
-    const { pageSize = 30, cursor } = params;
+    const { pageSize = 50, cursor } = params;
     const queryParams = new URLSearchParams({
       pageSize: pageSize.toString()
     });
