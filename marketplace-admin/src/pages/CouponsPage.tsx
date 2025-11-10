@@ -19,7 +19,7 @@ const CouponsPage: React.FC = () => {
     try {
       setLoading(true);
       const params = {
-        pageSize: 10,
+        pageSize: 30,
         cursor: reset ? undefined : cursor
       };
 
