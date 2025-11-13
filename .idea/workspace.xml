@@ -6,7 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="f90b42fd-ecaf-47c9-b70e-833529ecab6b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/CouponsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/CouponsPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/api/coupon.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/api/coupon.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/types/coupon.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/types/coupon.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +77,7 @@
       <workItem from="1759650506359" duration="16635000" />
       <workItem from="1760038330293" duration="10000" />
       <workItem from="1760861066989" duration="2384000" />
-      <workItem from="1762767781364" duration="65000" />
+      <workItem from="1762767781364" duration="9544000" />
     </task>
     <servers />
   </component>

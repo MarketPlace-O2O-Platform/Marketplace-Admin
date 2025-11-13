@@ -1,0 +1,151 @@
+.receipt-detail-page {
+  padding: 20px;
+}
+
+.receipt-detail-page .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.receipt-detail-page .page-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.receipt-detail-page .header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.detail-row-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.detail-section {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.detail-section h2 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.detail-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.detail-section:first-child .detail-grid {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-item label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-item > div {
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* 영수증 이미지 컨테이너 */
+.receipt-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+/* 영수증 이미지 스타일 */
+.receipt-image {
+  max-width: 600px; /* 최대 너비 설정 */
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: zoom-in;
+  transition: transform 0.3s ease;
+}
+
+.receipt-image:hover {
+  transform: scale(1.02);
+}
+
+/* 이미지 클릭 시 확대 (옵션) */
+.receipt-image.zoomed {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1.5);
+  max-width: 90vw;
+  max-height: 90vh;
+  z-index: 9999;
+  cursor: zoom-out;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* 확대 시 배경 오버레이 */
+.image-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 9998;
+  cursor: zoom-out;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .receipt-image {
+    max-width: 100%;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-row-container {
+    grid-template-columns: 1fr;
+  }
+
+  .receipt-detail-page .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+}

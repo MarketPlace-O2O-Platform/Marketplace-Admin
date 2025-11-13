@@ -8,7 +8,11 @@ import type {
   CreateGiftCouponRequest,
   CreatePaybackCouponRequest,
   UpdateGiftCouponRequest,
-  UpdatePaybackCouponRequest
+  UpdatePaybackCouponRequest,
+  PaybackReceiptListResponse,
+  PaybackReceiptListParams,
+  PaybackReceiptDetailResponse,
+  PaybackCompleteResponse
 } from '../types/coupon';
 
 export const couponApi = {
@@ -138,5 +142,30 @@ export const couponApi = {
     const promises = couponIds.map(id => couponApi.togglePaybackCouponVisibility(id));
     await Promise.all(promises);
     return { message: '일괄 처리가 완료되었습니다.' };
+  },
+
+  // 환급 쿠폰 영수증 목록 조회
+  getPaybackReceipts: async (params: PaybackReceiptListParams = {}): Promise<PaybackReceiptListResponse> => {
+    const { pageSize = 30, lastMemberPaybackId, marketId } = params;
+    const queryParams = new URLSearchParams();
+
+    queryParams.append('pageSize', pageSize.toString());
+    if (lastMemberPaybackId) queryParams.append('lastMemberPaybackId', lastMemberPaybackId.toString());
+    if (marketId) queryParams.append('marketId', marketId.toString());
+
+    const response = await apiClient.get(`/admins/payback-coupons/receipts?${queryParams.toString()}`);
+    return response.data;
+  },
+
+  // 환급 쿠폰 영수증 상세 조회
+  getPaybackReceiptDetail: async (memberPaybackId: number): Promise<PaybackReceiptDetailResponse> => {
+    const response = await apiClient.get(`/admins/payback-coupons/receipts/${memberPaybackId}`);
+    return response.data;
+  },
+
+  // 환급 처리 완료
+  completePayback: async (memberPaybackId: number): Promise<PaybackCompleteResponse> => {
+    const response = await apiClient.put(`/admins/payback-coupons/complete/${memberPaybackId}`);
+    return response.data;
   }
 };

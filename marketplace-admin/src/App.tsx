@@ -7,6 +7,8 @@ import StoreDetailPage from './pages/StoreDetailPage';
 import CouponsPage from './pages/CouponsPage';
 import CouponDetailPage from './pages/CouponDetailPage';
 import CouponFormPage from './pages/CouponFormPage';
+import PaybackReceiptsPage from './pages/PaybackReceiptsPage';
+import PaybackReceiptDetailPage from './pages/PaybackReceiptDetailPage';
 import PrivateRoute from './components/PrivateRoute';
 import { authUtils } from './utils/auth';
 import { loadKakaoMapScript } from './utils/kakaoMap';
@@ -34,59 +36,42 @@ function App() {
           />
           <Route
             path="/users"
-            element={
-              <PrivateRoute>
-                <MembersPage />
-              </PrivateRoute>
-            }
+            element={<PrivateRoute> <MembersPage /></PrivateRoute>}
           />
           <Route
             path="/stores"
-            element={
-              <PrivateRoute>
-                <StoresPage />
-              </PrivateRoute>
-            }
+            element={ <PrivateRoute> <StoresPage /></PrivateRoute>}
           />
           <Route
             path="/stores/:id"
-            element={
-              <PrivateRoute>
-                <StoreDetailPage />
-              </PrivateRoute>
+            element={ <PrivateRoute><StoreDetailPage /></PrivateRoute>
             }
           />
           <Route
             path="/coupons"
-            element={
-              <PrivateRoute>
-                <CouponsPage />
-              </PrivateRoute>
+            element={ <PrivateRoute><CouponsPage /></PrivateRoute>
             }
           />
           <Route
             path="/coupons/create"
-            element={
-              <PrivateRoute>
-                <CouponFormPage />
-              </PrivateRoute>
+            element={ <PrivateRoute> <CouponFormPage /> </PrivateRoute>
             }
           />
           <Route
             path="/coupons/:id"
-            element={
-              <PrivateRoute>
-                <CouponDetailPage />
-              </PrivateRoute>
-            }
+            element={ <PrivateRoute> <CouponDetailPage /> </PrivateRoute>}
           />
           <Route
             path="/coupons/:id/edit"
-            element={
-              <PrivateRoute>
-                <CouponFormPage />
-              </PrivateRoute>
-            }
+            element={<PrivateRoute> <CouponFormPage /> </PrivateRoute>}
+          />
+          <Route
+            path="/payback-receipts"
+            element={ <PrivateRoute> <PaybackReceiptsPage /> </PrivateRoute>}
+          />
+          <Route
+            path="/payback-receipts/:memberPaybackId"
+            element={ <PrivateRoute> <PaybackReceiptDetailPage /> </PrivateRoute>}
           />
           <Route
             path="/"

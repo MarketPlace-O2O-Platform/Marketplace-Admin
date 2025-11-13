@@ -134,3 +134,60 @@ export const COUPON_TYPE_LABELS: Record<CouponType, string> = {
   GIFT: '증정쿠폰',
   PAYBACK: '환급쿠폰'
 };
+
+// 환급 쿠폰 영수증 목록 아이템 타입
+export type PaybackReceiptListItem = {
+  memberPaybackId: number;
+  memberId: number;
+  couponName: string;
+  issuedAt: string;
+  receiptSubmittedAt: string;
+  receipt: string;
+  isPayback: boolean;
+  account: string;
+  accountNumber: string;
+};
+
+// 환급 쿠폰 영수증 목록 응답 타입
+export type PaybackReceiptListResponse = {
+  message: string;
+  response: {
+    couponResDtos: PaybackReceiptListItem[];
+    hasNext: boolean;
+  };
+};
+
+// 환급 쿠폰 영수증 목록 조회 파라미터
+export type PaybackReceiptListParams = {
+  pageSize?: number;
+  lastMemberPaybackId?: number;
+  marketId?: number;
+};
+
+// 환급 쿠폰 영수증 상세 타입
+export type PaybackReceiptDetail = {
+  memberPaybackId: number;
+  memberId: number;
+  couponName: string;
+  issuedAt: string;
+  receiptSubmittedAt: string;
+  receipt: string;
+  isPayback: boolean;
+  account: string;
+  accountNumber: string;
+};
+
+// 환급 쿠폰 영수증 상세 응답 타입
+export type PaybackReceiptDetailResponse = {
+  message: string;
+  response: PaybackReceiptDetail;
+};
+
+// 환급 처리 완료 응답 타입
+export type PaybackCompleteResponse = {
+  message: string;
+  response: {
+    couponId: number;
+    isUsed: boolean;
+  };
+};

@@ -31,6 +31,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
       path: '/coupons',
       label: '쿠폰관리',
       icon: '🎫'
+    },
+    {
+      path: '/payback-receipts',
+      label: '환급 쿠폰 관리',
+      icon: '💰'
     }
   ];
 
