@@ -118,7 +118,7 @@
 }
 
 /* 확대 시 배경 오버레이 */
-.image-overlay {
+.receipt-image-zoom-overlay {
   position: fixed;
   top: 0;
   left: 0;

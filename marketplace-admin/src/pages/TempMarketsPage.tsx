@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import CreateTempMarketModal from '../components/CreateTempMarketModal';
+import CachedImage from '../components/CachedImage';
 import { tempMarketAPI } from '../api/tempMarket';
 import type { TempMarket, CreateTempMarketRequest } from '../types/store';
 import { STORE_MAJOR_LABELS } from '../types/store';
@@ -13,7 +14,6 @@ const TempMarketsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -31,7 +31,6 @@ const TempMarketsPage: React.FC = () => {
 
       setMarkets(response.response.content);
       setTotalPages(response.response.page.totalPages);
-      setTotalElements(response.response.page.totalElements);
     } catch (err) {
       setError('공감 매장 목록을 불러오는데 실패했습니다.');
       console.error('Failed to load temp markets:', err);
@@ -200,7 +199,7 @@ const TempMarketsPage: React.FC = () => {
                   <td>
                     <div className="store-thumbnail-small">
                       {market.thumbnail ? (
-                        <img
+                        <CachedImage
                           src={getImageUrl(market.thumbnail)}
                           alt={`${market.marketName} 썸네일`}
                           className="thumbnail-image-small"

@@ -116,7 +116,7 @@ export type TempMarket = {
   thumbnail: string;
   cheerCount: number;
   isHidden: boolean;
-  category?: string; // 선택 사항
+  category: StoreMajor;
 };
 
 // 공감 매장 목록 응답 타입
@@ -147,7 +147,7 @@ export type TempMarketDetailResponse = {
 
 // 공감 매장 생성 요청 타입
 export type CreateTempMarketRequest = {
-  category: string;
+  category: StoreMajor;
   marketName: string;
   description: string;
   address: string;
@@ -157,7 +157,7 @@ export type CreateTempMarketRequest = {
 // 공감 매장 수정 요청 타입
 export type UpdateTempMarketRequest = {
   marketId: number;
-  category: string;
+  category: StoreMajor;
   marketName: string;
   description: string;
   address: string;

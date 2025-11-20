@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { UpdateTempMarketRequest, TempMarket } from '../types/store';
 import type { KakaoPlace } from '../types/kakao';
 import { STORE_MAJOR_LABELS } from '../types/store';
+import CachedImage from './CachedImage';
 import './CreateStoreModal.css';
 
 interface EditTempMarketModalProps {
@@ -24,7 +25,7 @@ const EditTempMarketModal: React.FC<EditTempMarketModalProps> = ({ market, onClo
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchResults, setSearchResults] = useState<KakaoPlace[]>([]);
   const [showSearchModal, setShowSearchModal] = useState(false);
-  const [currentThumbnail, setCurrentThumbnail] = useState<string>(market.thumbnail);
+  const [currentThumbnail] = useState<string>(market.thumbnail);
 
   // 카테고리 추출 (기존 데이터에서 카테고리를 어떻게 가져올지 모르므로 기본값 설정)
   useEffect(() => {
@@ -295,7 +296,7 @@ const EditTempMarketModal: React.FC<EditTempMarketModalProps> = ({ market, onClo
               {!formData.file && currentThumbnail && (
                 <div className="selected-images">
                   <div className="selected-image-item">
-                    <img
+                    <CachedImage
                       src={getImageUrl(currentThumbnail)}
                       alt="기존 썸네일"
                       className="selected-image-preview"

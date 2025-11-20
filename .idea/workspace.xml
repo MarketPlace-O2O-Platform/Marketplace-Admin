@@ -6,13 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="f90b42fd-ecaf-47c9-b70e-833529ecab6b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/MembersPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/MembersPage.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/MembersPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/MembersPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/EditTempMarketModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/EditTempMarketModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/StoreDetailPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/StoreDetailPage.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/StoresPage.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/TempMarketDetailPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/TempMarketDetailPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/TempMarketsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/TempMarketsPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/marketplace-admin/src/types/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/types/store.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -47,7 +45,9 @@
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "/Users/hanhyeonseung/Documents/AppCenter/Marketplace-Admin",
@@ -57,6 +57,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true",
     "ts.external.directory.path": "/Users/hanhyeonseung/Documents/AppCenter/Marketplace-Admin/marketplace-admin/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
@@ -64,7 +65,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-WS-251.29188.1" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-WS-252.27397.92" />
       </set>
     </attachedChunks>
   </component>
@@ -85,6 +86,7 @@
       <workItem from="1760861066989" duration="2384000" />
       <workItem from="1762767781364" duration="17705000" />
       <workItem from="1763634662514" duration="526000" />
+      <workItem from="1763635312114" duration="6634000" />
     </task>
     <servers />
   </component>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import EditTempMarketModal from '../components/EditTempMarketModal';
+import CachedImage from '../components/CachedImage';
 import { tempMarketAPI } from '../api/tempMarket';
 import type { TempMarket, UpdateTempMarketRequest } from '../types/store';
 import { STORE_MAJOR_LABELS } from '../types/store';
@@ -58,7 +59,7 @@ const TempMarketDetailPage: React.FC = () => {
       // 매장 정보를 다시 로드
       await loadMarketDetail();
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('공감 매장 수정에 실패했습니다.');
       console.error('공감 매장 수정 실패:', err);
       throw err;
@@ -79,7 +80,7 @@ const TempMarketDetailPage: React.FC = () => {
       // 매장 정보를 다시 로드
       await loadMarketDetail();
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('공개/숨김 처리에 실패했습니다.');
       console.error('공개/숨김 처리 실패:', err);
     } finally {
@@ -97,7 +98,7 @@ const TempMarketDetailPage: React.FC = () => {
     try {
       await tempMarketAPI.deleteTempMarket(market.marketId);
       navigate('/temp-markets');
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('공감 매장 삭제에 실패했습니다.');
       console.error('공감 매장 삭제 실패:', err);
       setDeleteConfirm(false);
@@ -196,13 +197,10 @@ const TempMarketDetailPage: React.FC = () => {
             <h2>썸네일 이미지</h2>
             <div className="market-image-container">
               {market.thumbnail ? (
-                <img
+                <CachedImage
                   src={getImageUrl(market.thumbnail)}
                   alt={`${market.marketName} 썸네일`}
                   className="market-image"
-                  onError={(e) => {
-                    e.currentTarget.src = 'https://via.placeholder.com/400x300?text=No+Image';
-                  }}
                 />
               ) : (
                 <div className="thumbnail-placeholder-large">
