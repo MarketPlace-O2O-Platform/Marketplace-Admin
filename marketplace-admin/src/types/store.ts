@@ -106,3 +106,60 @@ export const STORE_MAJOR_LABELS: Record<StoreMajor, string> = {
   JAPANESE: '일식',
   AMERICAN: '양식'
 };
+
+// 공감 매장 타입
+export type TempMarket = {
+  marketId: number;
+  marketName: string;
+  description: string;
+  address: string;
+  thumbnail: string;
+  cheerCount: number;
+  isHidden: boolean;
+  category?: string; // 선택 사항
+};
+
+// 공감 매장 목록 응답 타입
+export type TempMarketListResponse = {
+  message: string;
+  response: {
+    content: TempMarket[];
+    page: {
+      size: number;
+      number: number;
+      totalElements: number;
+      totalPages: number;
+    };
+  };
+};
+
+// 공감 매장 목록 조회 파라미터
+export type TempMarketListParams = {
+  page?: number;
+  size?: number;
+};
+
+// 공감 매장 상세 응답 타입
+export type TempMarketDetailResponse = {
+  message: string;
+  response: TempMarket;
+};
+
+// 공감 매장 생성 요청 타입
+export type CreateTempMarketRequest = {
+  category: string;
+  marketName: string;
+  description: string;
+  address: string;
+  file?: File;
+};
+
+// 공감 매장 수정 요청 타입
+export type UpdateTempMarketRequest = {
+  marketId: number;
+  category: string;
+  marketName: string;
+  description: string;
+  address: string;
+  file?: File;
+};

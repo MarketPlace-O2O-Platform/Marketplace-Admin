@@ -1,13 +1,13 @@
 /* 메인 페이지 컨테이너 */
 .stores-page {
-  padding: 24px;
+  padding: 20px 24px;
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   gap: 16px;
 }
 
@@ -48,8 +48,8 @@
 
 /* 검색 및 필터 영역 */
 .filters-section {
-  margin-bottom: 24px;
-  padding: 16px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
   background: var(--bg-color);
   border-radius: 8px;
   border: 1px solid var(--border-color);

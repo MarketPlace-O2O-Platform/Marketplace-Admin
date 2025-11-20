@@ -129,8 +129,8 @@ const MembersPage: React.FC = () => {
             <thead>
               <tr>
                 <th>학번</th>
-                <th>계정</th>
-                <th>계정번호</th>
+                <th>은행</th>
+                <th>계좌번호</th>
                 <th>응원권</th>
                 <th>권한</th>
                 <th>가입일</th>
