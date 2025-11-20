@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f90b42fd-ecaf-47c9-b70e-833529ecab6b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/EditTempMarketModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/EditTempMarketModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/components/Sidebar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/StoreDetailPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/StoreDetailPage.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/TempMarketDetailPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/TempMarketDetailPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/pages/TempMarketsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/pages/TempMarketsPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/marketplace-admin/src/types/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marketplace-admin/src/types/store.ts" afterDir="false" />
-    </list>
+    <list default="true" id="f90b42fd-ecaf-47c9-b70e-833529ecab6b" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -86,7 +78,7 @@
       <workItem from="1760861066989" duration="2384000" />
       <workItem from="1762767781364" duration="17705000" />
       <workItem from="1763634662514" duration="526000" />
-      <workItem from="1763635312114" duration="6634000" />
+      <workItem from="1763635312114" duration="7090000" />
     </task>
     <servers />
   </component>
