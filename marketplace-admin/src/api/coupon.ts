@@ -84,7 +84,7 @@ export const couponApi = {
     const queryParams = new URLSearchParams();
 
     queryParams.append('pageSize', pageSize.toString());
-    if (cursor) queryParams.append('cursor', cursor.toString());
+    if (cursor) queryParams.append('lastPageIndex', cursor.toString());
     if (marketId) queryParams.append('marketId', marketId.toString());
 
     const response = await apiClient.get(`/admins/coupons/payback?${queryParams.toString()}`);
