@@ -93,7 +93,15 @@ export const couponApi = {
 
   // 매장별 환급쿠폰 목록 조회
   getPaybackCouponsByMarket: async (marketId: number, params: Omit<CouponListParams, 'marketId'> = {}): Promise<PaybackCouponListResponse> => {
-    return couponApi.getPaybackCoupons({ ...params, marketId });
+    const { pageSize = 10, cursor } = params;
+    const queryParams = new URLSearchParams();
+
+    queryParams.append('marketId', marketId.toString());
+    queryParams.append('size', pageSize.toString());
+    if (cursor) queryParams.append('couponId', cursor.toString());
+
+    const response = await apiClient.get(`/admin/payback-coupons?${queryParams.toString()}`);
+    return response.data;
   },
 
   // 환급쿠폰 상세 조회
