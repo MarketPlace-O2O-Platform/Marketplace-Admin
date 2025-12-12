@@ -16,7 +16,7 @@ import type {
 } from '../types/coupon';
 
 export const couponApi = {
-  // 쿠폰 목록 조회 (전체)
+  // 일반 쿠폰 목록 조회 (전체)
   getCoupons: async (params: CouponListParams = {}): Promise<CouponListResponse> => {
     const { pageSize = 30, cursor, couponType, marketId } = params;
     const queryParams = new URLSearchParams();
@@ -45,49 +45,51 @@ export const couponApi = {
     return response.data;
   },
 
-  // 환급쿠폰 생성
-  createPaybackCoupon: async (marketId: number, data: CreatePaybackCouponRequest): Promise<PaybackCouponResponse> => {
-    const queryParams = new URLSearchParams();
-    queryParams.append('marketId', marketId.toString());
-
-    const response = await apiClient.post(`/admins/coupons/payback?${queryParams.toString()}`, data);
-    return response.data;
-  },
 
   // 증정쿠폰 수정
   updateGiftCoupon: async (couponId: number, data: UpdateGiftCouponRequest): Promise<CouponResponse> => {
     const response = await apiClient.put(`/admins/coupons/${couponId}`, data);
     return response.data;
   },
-
-  // 환급쿠폰 수정
-  updatePaybackCoupon: async (couponId: number, data: UpdatePaybackCouponRequest): Promise<PaybackCouponResponse> => {
-    const response = await apiClient.put(`/admins/coupons/payback/${couponId}`, data);
-    return response.data;
-  },
-
+  
   // 쿠폰 삭제 (증정쿠폰)
   deleteCoupon: async (couponId: number): Promise<{ message: string }> => {
     const response = await apiClient.delete(`/admins/coupons/${couponId}`);
     return response.data;
   },
 
-  // 환급쿠폰 삭제
-  deletePaybackCoupon: async (couponId: number): Promise<{ message: string }> => {
-    const response = await apiClient.delete(`/admins/coupons/payback/${couponId}`);
+  
+  // =========================  환급 쿠폰 API  ========================= //
+  // 환급쿠폰 생성
+  createPaybackCoupon: async (marketId: number, data: CreatePaybackCouponRequest): Promise<PaybackCouponResponse> => {
+    const queryParams = new URLSearchParams();
+    queryParams.append('marketId', marketId.toString());
+
+    const response = await apiClient.post(`/admins/payback-coupons?${queryParams.toString()}`, data);
     return response.data;
   },
 
-  // 환급쿠폰 목록 조회
+  // 환급쿠폰 수정
+  updatePaybackCoupon: async (couponId: number, data: UpdatePaybackCouponRequest): Promise<PaybackCouponResponse> => {
+    const response = await apiClient.put(`/admins/payback-coupons/${couponId}`, data);
+    return response.data;
+  },
+
+  // 환급쿠폰 삭제
+  deletePaybackCoupon: async (couponId: number): Promise<{ message: string }> => {
+    const response = await apiClient.delete(`/admins/payback-coupons/${couponId}`);
+    return response.data;
+  },
+
+  // 전체 환급쿠폰 목록 조회
   getPaybackCoupons: async (params: CouponListParams = {}): Promise<PaybackCouponListResponse> => {
-    const { pageSize = 30, cursor, marketId } = params;
+    const { pageSize = 10, cursor } = params;
     const queryParams = new URLSearchParams();
 
     queryParams.append('pageSize', pageSize.toString());
     if (cursor) queryParams.append('lastPageIndex', cursor.toString());
-    if (marketId) queryParams.append('marketId', marketId.toString());
 
-    const response = await apiClient.get(`/admins/coupons/payback?${queryParams.toString()}`);
+    const response = await apiClient.get(`/admins/payback-coupons?${queryParams.toString()}`);
     return response.data;
   },
 
@@ -96,17 +98,16 @@ export const couponApi = {
     const { pageSize = 10, cursor } = params;
     const queryParams = new URLSearchParams();
 
-    queryParams.append('marketId', marketId.toString());
     queryParams.append('size', pageSize.toString());
     if (cursor) queryParams.append('couponId', cursor.toString());
 
-    const response = await apiClient.get(`/admin/payback-coupons?${queryParams.toString()}`);
+    const response = await apiClient.get(`/admins/payback-coupons/market/${marketId}?${queryParams.toString()}`);
     return response.data;
   },
 
   // 환급쿠폰 상세 조회
   getPaybackCoupon: async (couponId: number): Promise<PaybackCouponResponse> => {
-    const response = await apiClient.get(`/admins/coupons/payback/${couponId}`);
+    const response = await apiClient.get(`/admins/payback-coupons/${couponId}`);
     return response.data;
   },
 
