@@ -18,12 +18,11 @@ import type {
 export const couponApi = {
   // 일반 쿠폰 목록 조회 (전체)
   getCoupons: async (params: CouponListParams = {}): Promise<CouponListResponse> => {
-    const { pageSize = 30, cursor, couponType, marketId } = params;
+    const { pageSize = 10, cursor, marketId } = params;
     const queryParams = new URLSearchParams();
 
     queryParams.append('pageSize', pageSize.toString());
-    if (cursor) queryParams.append('cursor', cursor.toString());
-    if (couponType) queryParams.append('couponType', couponType);
+    if (cursor) queryParams.append('lastPageIndex', cursor.toString());
     if (marketId) queryParams.append('marketId', marketId.toString());
 
     const response = await apiClient.get(`/admins/coupons?${queryParams.toString()}`);
@@ -55,6 +54,21 @@ export const couponApi = {
   // 쿠폰 삭제 (증정쿠폰)
   deleteCoupon: async (couponId: number): Promise<{ message: string }> => {
     const response = await apiClient.delete(`/admins/coupons/${couponId}`);
+    return response.data;
+  },
+
+  // 증정쿠폰 일괄 삭제
+  deleteCoupons: async (couponIds: number[]): Promise<{ message: string }> => {
+    const response = await apiClient.delete('/admins/coupons/batch', {
+      data: couponIds
+    });
+    return response.data;
+  },
+
+
+  // 증정쿠폰 숨김/공개 처리
+  toggleGiftCouponVisibility: async (couponId: number): Promise<{ message: string }> => {
+    const response = await apiClient.put(`/admins/coupons/${couponId}/hidden`);
     return response.data;
   },
 
@@ -111,48 +125,21 @@ export const couponApi = {
     return response.data;
   },
 
-  // 증정쿠폰 일괄 삭제
-  deleteCoupons: async (couponIds: number[]): Promise<{ message: string }> => {
-    const response = await apiClient.delete('/admins/coupons/batch', {
-      data: couponIds
-    });
-    return response.data;
-  },
-
   // 환급쿠폰 일괄 삭제
   deletePaybackCoupons: async (couponIds: number[]): Promise<{ message: string }> => {
-    const response = await apiClient.delete('/admins/coupons/payback/batch', {
+    const response = await apiClient.delete('/admins/payback-coupons/batch', {
       data: couponIds
     });
-    return response.data;
-  },
-
-  // 증정쿠폰 숨김/공개 처리
-  toggleGiftCouponVisibility: async (couponId: number): Promise<{ message: string }> => {
-    const response = await apiClient.put(`/admins/coupons/${couponId}/hidden`);
     return response.data;
   },
 
   // 환급쿠폰 숨김/공개 처리
   togglePaybackCouponVisibility: async (couponId: number): Promise<{ message: string }> => {
-    const response = await apiClient.put(`/admins/coupons/payback/${couponId}/hidden`);
+    const response = await apiClient.put(`/admins/payback-coupons/hidden/${couponId}`);
     return response.data;
   },
 
-  // 증정쿠폰 일괄 숨김/공개 처리
-  batchToggleGiftCouponsVisibility: async (couponIds: number[]): Promise<{ message: string }> => {
-    const promises = couponIds.map(id => couponApi.toggleGiftCouponVisibility(id));
-    await Promise.all(promises);
-    return { message: '일괄 처리가 완료되었습니다.' };
-  },
-
-  // 환급쿠폰 일괄 숨김/공개 처리
-  batchTogglePaybackCouponsVisibility: async (couponIds: number[]): Promise<{ message: string }> => {
-    const promises = couponIds.map(id => couponApi.togglePaybackCouponVisibility(id));
-    await Promise.all(promises);
-    return { message: '일괄 처리가 완료되었습니다.' };
-  },
-
+// =========================  환급 쿠폰 영수증 API  ========================= //
   // 환급 쿠폰 영수증 목록 조회
   getPaybackReceipts: async (params: PaybackReceiptListParams = {}): Promise<PaybackReceiptListResponse> => {
     const { pageSize = 30, lastMemberPaybackId, marketId } = params;

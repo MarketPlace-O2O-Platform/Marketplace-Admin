@@ -182,10 +182,13 @@ const CouponsPage: React.FC = () => {
     }
 
     try {
-      if (activeTab === 'GIFT') {
-        await couponApi.batchToggleGiftCouponsVisibility(couponIds);
-      } else {
-        await couponApi.batchTogglePaybackCouponsVisibility(couponIds);
+      // 개별 처리를 순차적으로 실행
+      for (const couponId of couponIds) {
+        if (activeTab === 'GIFT') {
+          await couponApi.toggleGiftCouponVisibility(couponId);
+        } else {
+          await couponApi.togglePaybackCouponVisibility(couponId);
+        }
       }
 
       // 상태 업데이트 - 선택된 쿠폰들의 isHidden 상태를 토글
