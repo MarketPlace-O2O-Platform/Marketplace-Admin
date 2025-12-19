@@ -10,7 +10,7 @@ export const requestMarketAPI = {
     });
 
     const response = await apiClient.get<RequestMarketListResponse>(
-      `/api/request-markets?${queryParams.toString()}`
+      `/request-markets?${queryParams.toString()}`
     );
     return response.data;
   }
