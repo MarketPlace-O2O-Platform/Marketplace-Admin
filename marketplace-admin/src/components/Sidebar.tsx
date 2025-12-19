@@ -33,6 +33,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
       icon: '❤️'
     },
     {
+      path: '/request-markets',
+      label: '요청 매장 관리',
+      icon: '📝'
+    },
+    {
       path: '/coupons',
       label: '쿠폰관리',
       icon: '🎫'

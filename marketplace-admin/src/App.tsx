@@ -11,6 +11,7 @@ import PaybackReceiptsPage from './pages/PaybackReceiptsPage';
 import PaybackReceiptDetailPage from './pages/PaybackReceiptDetailPage';
 import TempMarketsPage from './pages/TempMarketsPage';
 import TempMarketDetailPage from './pages/TempMarketDetailPage';
+import RequestMarketsPage from './pages/RequestMarketsPage';
 import PrivateRoute from './components/PrivateRoute';
 import { authUtils } from './utils/auth';
 import { loadKakaoMapScript } from './utils/kakaoMap';
@@ -82,6 +83,10 @@ function App() {
           <Route
             path="/temp-markets/:tempMarketId"
             element={ <PrivateRoute> <TempMarketDetailPage /> </PrivateRoute>}
+          />
+          <Route
+            path="/request-markets"
+            element={ <PrivateRoute> <RequestMarketsPage /> </PrivateRoute>}
           />
           <Route
             path="/"
