@@ -5,6 +5,7 @@ export interface RequestMarket {
   name: string;
   address: string;
   count: number;
+  isEnroll: boolean;
 }
 
 export interface RequestMarketListParams {
@@ -42,4 +43,9 @@ export interface RequestMarketListResponse {
     pageable: Pageable;
     empty: boolean;
   };
+}
+
+export interface EnrollRequestMarketResponse {
+  message: string;
+  response: RequestMarket;
 }

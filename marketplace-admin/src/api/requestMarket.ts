@@ -1,5 +1,5 @@
 import { apiClient } from './config';
-import type { RequestMarketListResponse, RequestMarketListParams } from '../types/requestMarket';
+import type { RequestMarketListResponse, RequestMarketListParams, EnrollRequestMarketResponse } from '../types/requestMarket';
 
 export const requestMarketAPI = {
   getRequestMarkets: async (params: RequestMarketListParams = {}): Promise<RequestMarketListResponse> => {
@@ -10,7 +10,14 @@ export const requestMarketAPI = {
     });
 
     const response = await apiClient.get<RequestMarketListResponse>(
-      `/request-markets?${queryParams.toString()}`
+      `/api/request-markets?${queryParams.toString()}`
+    );
+    return response.data;
+  },
+
+  enrollRequestMarket: async (id: number): Promise<EnrollRequestMarketResponse> => {
+    const response = await apiClient.patch<EnrollRequestMarketResponse>(
+      `/api/request-markets/${id}/enroll`
     );
     return response.data;
   }

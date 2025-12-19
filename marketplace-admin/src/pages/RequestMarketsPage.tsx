@@ -44,6 +44,28 @@ const RequestMarketsPage: React.FC = () => {
     }
   };
 
+  const handleEnroll = async (market: RequestMarket) => {
+    if (market.isEnroll) return;
+
+    if (!confirm(`"${market.name}" 매장을 등록 완료 처리하시겠습니까?`)) {
+      return;
+    }
+
+    try {
+      await requestMarketAPI.enrollRequestMarket(market.id);
+
+      // 목록 업데이트
+      setRequestMarkets(prev =>
+        prev.map(m => m.id === market.id ? { ...m, isEnroll: true } : m)
+      );
+
+      setError('');
+    } catch (err: any) {
+      setError('등록 완료 처리에 실패했습니다.');
+      console.error('등록 완료 처리 실패:', err);
+    }
+  };
+
   const renderPagination = () => {
     const pages = [];
     const maxPagesToShow = 5;
@@ -115,16 +137,18 @@ const RequestMarketsPage: React.FC = () => {
                 <th>매장명</th>
                 <th>주소</th>
                 <th>요청 횟수</th>
+                <th>등록 상태</th>
+                <th>작업</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={4} className="loading">요청 매장 목록을 불러오는 중...</td>
+                  <td colSpan={6} className="loading">요청 매장 목록을 불러오는 중...</td>
                 </tr>
               ) : requestMarkets.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="empty-state">요청된 매장이 없습니다.</td>
+                  <td colSpan={6} className="empty-state">요청된 매장이 없습니다.</td>
                 </tr>
               ) : (
                 requestMarkets.map((market, index) => (
@@ -138,6 +162,20 @@ const RequestMarketsPage: React.FC = () => {
                     <td>{market.address}</td>
                     <td>
                       <span className="count-badge">{market.count}회</span>
+                    </td>
+                    <td>
+                      <span className={`status-badge ${market.isEnroll ? 'enrolled' : 'pending'}`}>
+                        {market.isEnroll ? '등록 완료' : '대기'}
+                      </span>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-sm btn-primary"
+                        onClick={() => handleEnroll(market)}
+                        disabled={market.isEnroll}
+                      >
+                        {market.isEnroll ? '완료됨' : '등록 완료 처리'}
+                      </button>
                     </td>
                   </tr>
                 ))
