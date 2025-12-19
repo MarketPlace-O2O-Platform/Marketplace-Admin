@@ -85,6 +85,8 @@
 .market-name {
   font-weight: 500;
   color: #1a1a1a;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .count-badge {
