@@ -28,16 +28,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
       icon: '🏪'
     },
     {
-      path: '/temp-markets',
-      label: '공감 매장 관리',
-      icon: '❤️'
-    },
-    {
-      path: '/request-markets',
-      label: '요청 매장 관리',
-      icon: '📝'
-    },
-    {
       path: '/coupons',
       label: '쿠폰관리',
       icon: '🎫'
@@ -46,6 +36,16 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
       path: '/payback-receipts',
       label: '환급 쿠폰 관리',
       icon: '💰'
+    },
+    {
+      path: '/temp-markets',
+      label: '공감 매장 관리',
+      icon: '❤️'
+    },
+    {
+      path: '/request-markets',
+      label: '요청 매장 관리',
+      icon: '📝'
     }
   ];
 

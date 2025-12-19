@@ -18,7 +18,10 @@ const RequestMarketsPage: React.FC = () => {
       setLoading(true);
       const response = await requestMarketAPI.getRequestMarkets({ page, size: pageSize });
 
-      setRequestMarkets(response.response.content);
+      // ID 내림차순으로 정렬
+      const sortedContent = [...response.response.content].sort((a, b) => b.id - a.id);
+
+      setRequestMarkets(sortedContent);
       setTotalPages(response.response.totalPages);
       setTotalElements(response.response.totalElements);
       setCurrentPage(page);
@@ -124,9 +127,9 @@ const RequestMarketsPage: React.FC = () => {
                   <td colSpan={4} className="empty-state">요청된 매장이 없습니다.</td>
                 </tr>
               ) : (
-                requestMarkets.map((market) => (
+                requestMarkets.map((market, index) => (
                   <tr key={market.id}>
-                    <td>{market.id}</td>
+                    <td>{(currentPage - 1) * pageSize + index + 1}</td>
                     <td>
                       <div className="market-name-cell">
                         <span className="market-name">{market.name}</span>
