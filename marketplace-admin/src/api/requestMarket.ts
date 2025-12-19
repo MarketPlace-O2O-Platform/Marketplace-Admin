@@ -10,14 +10,14 @@ export const requestMarketAPI = {
     });
 
     const response = await apiClient.get<RequestMarketListResponse>(
-      `/api/request-markets?${queryParams.toString()}`
+      `/request-markets?${queryParams.toString()}`
     );
     return response.data;
   },
 
   enrollRequestMarket: async (id: number): Promise<EnrollRequestMarketResponse> => {
     const response = await apiClient.patch<EnrollRequestMarketResponse>(
-      `/api/request-markets/${id}/enroll`
+      `/request-markets/${id}/enroll`
     );
     return response.data;
   }
