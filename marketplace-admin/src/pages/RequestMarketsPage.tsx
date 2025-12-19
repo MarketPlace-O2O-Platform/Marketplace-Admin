@@ -164,7 +164,7 @@ const RequestMarketsPage: React.FC = () => {
                       <span className="count-badge">{market.count}회</span>
                     </td>
                     <td>
-                      <span className={`status-badge ${market.isEnroll ? 'enrolled' : 'pending'}`}>
+                      <span className={`enroll-status-badge ${market.isEnroll ? 'enrolled' : 'pending'}`}>
                         {market.isEnroll ? '등록 완료' : '대기'}
                       </span>
                     </td>

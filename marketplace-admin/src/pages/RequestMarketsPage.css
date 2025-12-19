@@ -99,20 +99,23 @@
   font-weight: 500;
 }
 
-.status-badge {
-  display: inline-block;
-  padding: 4px 12px;
+.enroll-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
   border-radius: 12px;
   font-size: 13px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
-.status-badge.enrolled {
+.enroll-status-badge.enrolled {
   background-color: #e8f5e9;
   color: #2e7d32;
 }
 
-.status-badge.pending {
+.enroll-status-badge.pending {
   background-color: #fff3e0;
   color: #e65100;
 }
