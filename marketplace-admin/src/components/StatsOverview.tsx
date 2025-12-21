@@ -87,14 +87,14 @@ const StatsOverview: React.FC = () => {
             </div>
           </div>
           <div className="stat-content">
-            <p className="stat-value">{recentPaybackStats?.avgPaybackCouponDownloadPerMember.toFixed(1) ?? 0}<span className="stat-unit">개</span></p>
+            <p className="stat-value">{recentPaybackStats?.avgPaybackCouponDownloadPerMember.toFixed(2) ?? 0}<span className="stat-unit">개</span></p>
             <p className="stat-description">가입자 <strong>{recentPaybackStats?.recentSevenDaysMemberCount ?? 0}명</strong> 기준</p>
           </div>
         </div>
 
         <div className="stat-card stat-card--success">
           <div className="stat-header">
-            <h3 className="stat-label">평균 쿠폰 다운로드</h3>
+            <h3 className="stat-label">평균 환급 쿠폰 다운로드</h3>
             <div className="stat-icon-box stat-icon-box--success">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
@@ -102,7 +102,7 @@ const StatsOverview: React.FC = () => {
             </div>
           </div>
           <div className="stat-content">
-            <p className="stat-value">{paybackStats?.avgCouponDownloadPerMember.toFixed(1) ?? 0}<span className="stat-unit">개</span></p>
+            <p className="stat-value">{paybackStats?.avgCouponDownloadPerMember.toFixed(2) ?? 0}<span className="stat-unit">개</span></p>
             <p className="stat-description">회원당 평균</p>
           </div>
         </div>
@@ -118,7 +118,7 @@ const StatsOverview: React.FC = () => {
             </div>
           </div>
           <div className="stat-content">
-            <p className="stat-value">{paybackStats?.paybackRate.toFixed(1) ?? 0}<span className="stat-unit">%</span></p>
+            <p className="stat-value">{paybackStats?.paybackRate.toFixed(2) ?? 0}<span className="stat-unit">%</span></p>
             <p className="stat-description">전체 쿠폰 대비</p>
           </div>
         </div>
