@@ -12,6 +12,7 @@ import './StoresPage.css';
 const StoresPage: React.FC = () => {
   const navigate = useNavigate();
   const [stores, setStores] = useState<Store[]>([]);
+  const [viewMode, setViewMode] = useState<'list' | 'card'>('list');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [hasNext, setHasNext] = useState(false);
@@ -158,6 +159,7 @@ const StoresPage: React.FC = () => {
   };
 
   const handleStartEdit = () => {
+    setViewMode('list');
     setIsEditMode(true);
     setEditingStores(sortedStores);
   };
@@ -182,7 +184,25 @@ const StoresPage: React.FC = () => {
               <h1 className="page-title">매장관리</h1>
               <p className="page-description">등록된 매장을 관리하고 새로운 매장을 추가합니다.</p>
             </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <div className="view-mode-toggle">
+                <button
+                  className={`btn-icon ${viewMode === 'list' ? 'active' : ''}`}
+                  onClick={() => !isEditMode && setViewMode('list')}
+                  title="리스트 뷰"
+                  disabled={isEditMode}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                </button>
+                <button
+                  className={`btn-icon ${viewMode === 'card' ? 'active' : ''}`}
+                  onClick={() => !isEditMode && setViewMode('card')}
+                  title="카드 뷰"
+                  disabled={isEditMode}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                </button>
+              </div>
               {isEditMode ? (
                 <>
                   <button className="btn btn--secondary" onClick={handleCancelEdit}>
@@ -227,6 +247,7 @@ const StoresPage: React.FC = () => {
           </div>
         )}
 
+        {viewMode === 'list' ? (
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="table-container">
             <table className="stores-table">
@@ -349,6 +370,62 @@ const StoresPage: React.FC = () => {
             </table>
           </div>
         </DragDropContext>
+        ) : (
+          <div className="stores-grid">
+            {loading && stores.length === 0 ? (
+              <div className="loading-state">매장 목록을 불러오는 중...</div>
+            ) : displayStores.length === 0 ? (
+              <div className="empty-state">매장이 없습니다.</div>
+            ) : (
+              displayStores.map((store) => (
+                <div
+                  key={store.marketId}
+                  className="store-card-item"
+                  onClick={() => handleStoreDetail(store)}
+                >
+                  <div className="store-card-image">
+                    {store.thumbnail ? (
+                      <img
+                        src={store.thumbnail.startsWith('http') ? store.thumbnail : `${import.meta.env.VITE_API_BASE_URL || 'https://marketplace.inuappcenter.kr'}/image/${store.thumbnail}`}
+                        alt={store.marketName}
+                      />
+                    ) : (
+                      <div className="thumbnail-placeholder">
+                        <span>📷</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="store-card-content">
+                    <div className="store-card-header">
+                      <span className="store-card-category">
+                        {store.major ? STORE_MAJOR_LABELS[store.major] : '-'}
+                      </span>
+                    </div>
+                    <h3 className="store-card-title">{store.marketName}</h3>
+                    <p className="store-card-desc">{store.marketDescription}</p>
+                    <div className="store-card-footer">
+                      <div className="store-card-address">
+                        📍 {store.address}
+                      </div>
+                      <div className="store-card-actions">
+                        <button
+                          className="btn-icon-only"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteStore(store);
+                          }}
+                          title="삭제"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
 
         {hasNext && !loading && (
           <div className="load-more">

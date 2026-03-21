@@ -51,7 +51,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
       <div className="login-card">
         <div className="login-header">
           <div className="kuromi-logo">🐰</div>
-          <h1 className="login-title">Kuromi Marketplace</h1>
+          <h1 className="login-title">앱센터 쿠러미</h1>
           <p className="login-subtitle">관리자 로그인</p>
         </div>
 
@@ -104,7 +104,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
         </form>
 
         <div className="login-footer">
-          <p className="footer-text">🖤 Kuromi Admin Dashboard</p>
+          <p className="footer-text">🖤 쿠러미 관리자 대쉬보드</p>
         </div>
       </div>
     </div>

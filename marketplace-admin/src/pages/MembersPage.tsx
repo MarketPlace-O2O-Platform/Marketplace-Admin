@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import StatsOverview from '../components/StatsOverview';
 import type { Member, MemberRole } from '../types/member';
 import { memberAPI } from '../api/member';
 import { MEMBER_ROLE_LABELS } from '../types/member';
@@ -94,8 +93,6 @@ const MembersPage: React.FC = () => {
         <div className="page-header">
           <h1>회원 관리</h1>
         </div>
-
-        <StatsOverview />
 
         <div className="filters-section">
           <div className="search-box">

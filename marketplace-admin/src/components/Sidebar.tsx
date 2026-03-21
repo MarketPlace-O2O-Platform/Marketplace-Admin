@@ -18,9 +18,16 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
 
   const menuItems = [
     {
+      path: '/',
+      label: '대시보드',
+      icon: '📊',
+      end: true,
+    },
+    {
       path: '/users',
       label: '유저관리',
-      icon: '👥'
+      icon: '👥',
+      end: false,
     },
     {
       path: '/stores',
@@ -68,6 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
           <NavLink
             key={item.path}
             to={item.path}
+            end={item.end}
             className={({ isActive }) =>
               `nav-item ${isActive ? 'nav-item--active' : ''}`
             }

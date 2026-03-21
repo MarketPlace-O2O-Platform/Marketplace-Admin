@@ -6,7 +6,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLoginSuccess = () => {
-    navigate('/users');
+    navigate('/dashboard');
   };
 
   return <LoginForm onLoginSuccess={handleLoginSuccess} />;

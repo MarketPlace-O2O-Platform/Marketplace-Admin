@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
 import MembersPage from './pages/MembersPage';
 import StoresPage from './pages/StoresPage';
 import StoreDetailPage from './pages/StoreDetailPage';
@@ -34,8 +35,12 @@ function App() {
           <Route
             path="/login"
             element={
-              isAuthenticated ? <Navigate to="/users" replace /> : <LoginPage />
+              isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />
             }
+          />
+          <Route
+            path="/"
+            element={<PrivateRoute><DashboardPage /></PrivateRoute>}
           />
           <Route
             path="/users"
@@ -89,12 +94,8 @@ function App() {
             element={ <PrivateRoute> <RequestMarketsPage /> </PrivateRoute>}
           />
           <Route
-            path="/"
-            element={<Navigate to={isAuthenticated ? "/users" : "/login"} replace />}
-          />
-          <Route
             path="*"
-            element={<Navigate to={isAuthenticated ? "/users" : "/login"} replace />}
+            element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />}
           />
         </Routes>
       </div>

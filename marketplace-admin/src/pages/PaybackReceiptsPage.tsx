@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { couponApi } from '../api/coupon';
 import type { PaybackReceiptListItem } from '../types/coupon';
+import './PaybackReceiptsPage.css';
 
 const PaybackReceiptsPage: React.FC = () => {
   const navigate = useNavigate();
