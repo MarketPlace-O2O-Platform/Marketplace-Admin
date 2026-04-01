@@ -10,33 +10,17 @@ const PaybackReceiptsPage: React.FC = () => {
   const [receipts, setReceipts] = useState<PaybackReceiptListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hasNext, setHasNext] = useState(false);
-  const [lastMemberPaybackId, setLastMemberPaybackId] = useState<number | undefined>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  const loadReceipts = async (reset = false) => {
+  const loadReceipts = async () => {
     try {
       setLoading(true);
-      const params = {
-        pageSize: 30,
-        lastMemberPaybackId: reset ? undefined : lastMemberPaybackId
-      };
-
-      const response = await couponApi.getPaybackReceipts(params);
-
-      if (reset) {
-        setReceipts(response.response.couponResDtos);
-      } else {
-        setReceipts(prev => [...prev, ...response.response.couponResDtos]);
-      }
-
-      setHasNext(response.response.hasNext);
-
-      // Set cursor to the last receipt's memberPaybackId for pagination
-      if (response.response.couponResDtos.length > 0) {
-        setLastMemberPaybackId(
-          response.response.couponResDtos[response.response.couponResDtos.length - 1].memberPaybackId
-        );
-      }
+      // 페이지네이션 처리를 위해 넉넉한 데이터를 가져옵니다. 
+      // (실제 서비스에서는 백엔드에서 totalCount를 주거나 page/size 파라미터를 지원하는 것이 좋습니다)
+      const response = await couponApi.getPaybackReceipts({ pageSize: 200 });
+      setReceipts(response.response.couponResDtos);
+      setError(null);
     } catch (err) {
       setError('환급 쿠폰 영수증 목록을 불러오는데 실패했습니다.');
       console.error('Failed to load payback receipts:', err);
@@ -46,14 +30,8 @@ const PaybackReceiptsPage: React.FC = () => {
   };
 
   useEffect(() => {
-    loadReceipts(true);
+    loadReceipts();
   }, []);
-
-  const handleLoadMore = () => {
-    if (hasNext && !loading) {
-      loadReceipts(false);
-    }
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('ko-KR');
@@ -70,6 +48,35 @@ const PaybackReceiptsPage: React.FC = () => {
     navigate(`/payback-receipts/${memberPaybackId}`);
   };
 
+  // 페이지네이션 계산
+  const totalPages = Math.ceil(receipts.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const currentReceipts = receipts.slice(startIndex, startIndex + pageSize);
+
+  const getPageNumbers = () => {
+    const pages: number[] = [];
+    const maxPages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxPages / 2));
+    let endPage = Math.min(totalPages, startPage + maxPages - 1);
+
+    if (endPage - startPage < maxPages - 1) {
+      startPage = Math.max(1, endPage - maxPages + 1);
+    }
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setCurrentPage(1);
+  };
+
   return (
     <Layout>
       <div className="payback-receipts-page">
@@ -78,6 +85,21 @@ const PaybackReceiptsPage: React.FC = () => {
         </div>
 
         {error && <div className="error-message">{error}</div>}
+
+        <div className="controls-section">
+          <div className="page-size-selector">
+            <span>표시:</span>
+            {[10, 30, 50].map(size => (
+              <button
+                key={size}
+                className={`btn-size ${pageSize === size ? 'active' : ''}`}
+                onClick={() => handlePageSizeChange(size)}
+              >
+                {size}개
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="table-container">
           <table className="coupon-table">
@@ -93,14 +115,14 @@ const PaybackReceiptsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {receipts.map((receipt, index) => (
+              {currentReceipts.map((receipt, index) => (
                 <tr
                   key={receipt.memberPaybackId}
                   className="receipt-row"
                   onClick={() => handleReceiptClick(receipt.memberPaybackId)}
                   style={{ cursor: 'pointer' }}
                 >
-                  <td>{index + 1}</td>
+                  <td>{startIndex + index + 1}</td>
                   <td>{receipt.memberId}</td>
                   <td className="coupon-name">{receipt.couponName}</td>
                   <td>{formatDate(receipt.issuedAt)}</td>
@@ -120,22 +142,35 @@ const PaybackReceiptsPage: React.FC = () => {
 
         {loading && <div className="loading">로딩 중...</div>}
 
-        {hasNext && !loading && (
-          <div className="load-more">
-            <button className="btn btn-outline-primary" onClick={handleLoadMore}>
-              더 보기
+        {totalPages > 1 && (
+        <div className="pagination">
+          <button
+            className="pagination-btn"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            이전
+          </button>
+          {getPageNumbers().map(page => (
+            <button
+              key={page}
+              className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+              onClick={() => handlePageChange(page)}
+            >
+              {page}
             </button>
-          </div>
-        )}
-
-        {!loading && receipts.length === 0 && (
-          <div className="empty-state">
-            <p>제출된 영수증이 없습니다.</p>
-          </div>
+          ))}
+          <button
+            className="pagination-btn"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            다음
+          </button>
+      </div>
         )}
       </div>
     </Layout>
   );
 };
-
 export default PaybackReceiptsPage;

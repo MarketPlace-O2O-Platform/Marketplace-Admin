@@ -9,35 +9,19 @@ const MembersPage: React.FC = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
-  const [hasNext, setHasNext] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState<MemberRole | 'ALL'>('ALL');
 
-  const loadMembers = async (lastPageIndex?: number, isLoadMore = false, roleFilter?: MemberRole) => {
+  const loadMembers = async (roleFilter?: MemberRole) => {
     try {
-      console.log('loadMembers 호출:', { lastPageIndex, isLoadMore, roleFilter });
-      if (!isLoadMore) setLoading(true);
-
+      setLoading(true);
       const response = await memberAPI.getMembers({
-        pageSize: 50,
-        lastPageIndex,
+        pageSize: 500, // 전체 데이터를 가져와 클라이언트 사이드 페이지네이션 수행
         role: roleFilter
       });
-
-      console.log('API 응답:', response);
-
-      if (isLoadMore) {
-        setMembers(prev => {
-          const newMembers = response.response.members.filter(
-            newMember => !prev.some(existingMember => existingMember.studentId === newMember.studentId)
-          );
-          return [...prev, ...newMembers];
-        });
-      } else {
-        setMembers(response.response.members);
-      }
-
-      setHasNext(response.response.hasNext);
+      setMembers(response.response.members);
       setError('');
     } catch (err: any) {
       setError('회원 목록을 불러오는데 실패했습니다.');
@@ -49,7 +33,8 @@ const MembersPage: React.FC = () => {
 
   useEffect(() => {
     const roleFilter = selectedRole === 'ALL' ? undefined : selectedRole;
-    loadMembers(undefined, false, roleFilter);
+    setCurrentPage(1);
+    loadMembers(roleFilter);
   }, [selectedRole]);
 
   const filteredMembers = members.filter(member => {
@@ -60,12 +45,33 @@ const MembersPage: React.FC = () => {
     return matchesSearch;
   });
 
-  const handleLoadMore = () => {
-    if (members.length > 0 && hasNext && !loading) {
-      const lastMember = members[members.length - 1];
-      const roleFilter = selectedRole === 'ALL' ? undefined : selectedRole;
-      loadMembers(lastMember.studentId, true, roleFilter);
+  // 페이지네이션 계산
+  const totalPages = Math.ceil(filteredMembers.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const currentMembers = filteredMembers.slice(startIndex, startIndex + pageSize);
+
+  const getPageNumbers = () => {
+    const pages: number[] = [];
+    const maxPages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxPages / 2));
+    let endPage = Math.min(totalPages, startPage + maxPages - 1);
+
+    if (endPage - startPage < maxPages - 1) {
+      startPage = Math.max(1, endPage - maxPages + 1);
     }
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setCurrentPage(1);
   };
 
   const formatDate = (dateString: string) => {
@@ -122,6 +128,21 @@ const MembersPage: React.FC = () => {
           </div>
         </div>
 
+        <div className="controls-section">
+          <div className="page-size-selector">
+            <span>표시:</span>
+            {[10, 30, 50].map(size => (
+              <button
+                key={size}
+                className={`btn-size ${pageSize === size ? 'active' : ''}`}
+                onClick={() => handlePageSizeChange(size)}
+              >
+                {size}개
+              </button>
+            ))}
+          </div>
+        </div>
+
         {error && <div className="error-message">{error}</div>}
 
         <div className="table-container">
@@ -138,16 +159,16 @@ const MembersPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {loading && members.length === 0 ? (
+              {loading && currentMembers.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="loading">회원 목록을 불러오는 중...</td>
                 </tr>
-              ) : filteredMembers.length === 0 ? (
+              ) : currentMembers.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="empty-state">회원이 없습니다.</td>
                 </tr>
               ) : (
-                filteredMembers.map((member) => (
+                currentMembers.map((member) => (
                   <tr key={member.studentId} className="member-row">
                     <td className="student-id">{member.studentId}</td>
                     <td className="account">{member.account || '-'}</td>
@@ -163,14 +184,34 @@ const MembersPage: React.FC = () => {
           </table>
         </div>
 
-        {hasNext && !loading && (
-          <div className="load-more">
-            <button className="btn btn-outline-primary" onClick={handleLoadMore}>
-              더 보기
+             {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              className="pagination-btn"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              이전
+            </button>
+            {getPageNumbers().map(page => (
+              <button
+                key={page}
+                className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+                onClick={() => handlePageChange(page)}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              className="pagination-btn"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              다음
             </button>
           </div>
         )}
-
+        
         <div className="table-footer">
           <p className="results-info">
             총 {filteredMembers.length}명의 회원

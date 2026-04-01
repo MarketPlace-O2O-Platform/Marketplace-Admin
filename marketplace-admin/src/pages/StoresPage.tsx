@@ -15,7 +15,8 @@ const StoresPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'list' | 'card'>('list');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
-  const [hasNext, setHasNext] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -24,26 +25,10 @@ const StoresPage: React.FC = () => {
 
   const loadStores = async (cursor?: number, isLoadMore = false) => {
     try {
-      console.log('loadStores 호출:', { cursor, isLoadMore });
-      if (!isLoadMore) setLoading(true);
-
-      const response = await storeAPI.getStores({ pageSize: 50, cursor });
-      console.log('API 응답:', response);
-
-      if (isLoadMore) {
-        // 더보기인 경우 기존 목록에 추가 (중복 제거)
-        setStores(prev => {
-          const newStores = response.response.marketResDtos.filter(
-            newStore => !prev.some(existingStore => existingStore.marketId === newStore.marketId)
-          );
-          return [...prev, ...newStores];
-        });
-      } else {
-        // 처음 로드인 경우 새로 설정
-        setStores(response.response.marketResDtos);
-      }
-
-      setHasNext(response.response.hasNext);
+      setLoading(true);
+      // 페이지네이션 구현을 위해 충분한 양을 가져오거나, 백엔드 사양에 맞춰 호출합니다.
+      const response = await storeAPI.getStores({ pageSize: 100 }); 
+      setStores(response.response.marketResDtos);
       setError('');
     } catch (err: any) {
       setError('매장 목록을 불러오는데 실패했습니다.');
@@ -90,19 +75,28 @@ const StoresPage: React.FC = () => {
     navigate(`/stores/${store.marketId}`);
   };
 
-  const handleLoadMore = () => {
-    console.log('더보기 클릭:', {
-      storesLength: stores.length,
-      hasNext,
-      loading,
-      lastMarketId: stores.length > 0 ? stores[stores.length - 1].marketId : null
-    });
+  // 페이지네이션 관련 로직 추가
+  const totalPages = Math.ceil(filteredStores.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const currentStores = filteredStores.slice(startIndex, startIndex + pageSize);
 
-    if (stores.length > 0 && hasNext && !loading) {
-      // 마지막 매장의 marketId를 lastPageIndex로 사용 (무한스크롤)
-      const lastStore = stores[stores.length - 1];
-      loadStores(lastStore.marketId, true);
-    }
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPages = 5;
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + maxPages - 1);
+    if (end - start < maxPages - 1) start = Math.max(1, end - maxPages + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setCurrentPage(1);
   };
 
   const handleDeleteStore = (store: Store) => {
@@ -173,7 +167,7 @@ const StoresPage: React.FC = () => {
   });
 
   // 표시할 매장 목록 (편집 모드일 때는 editingStores 사용)
-  const displayStores = isEditMode ? editingStores : sortedStores;
+  const displayStores = isEditMode ? editingStores : currentStores;
 
   return (
     <Layout>
@@ -236,6 +230,19 @@ const StoresPage: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
             />
+          </div>
+          {/* 페이지 크기 선택기 추가 */}
+          <div className="page-size-selector">
+            <span>표시:</span>
+            {[10, 30, 50].map(size => (
+              <button
+                key={size}
+                className={`btn-size ${pageSize === size ? 'active' : ''}`}
+                onClick={() => handlePageSizeChange(size)}
+              >
+                {size}개
+              </button>
+            ))}
           </div>
         </div>
 
@@ -427,10 +434,31 @@ const StoresPage: React.FC = () => {
           </div>
         )}
 
-        {hasNext && !loading && (
-          <div className="load-more">
-            <button className="btn btn-outline-primary" onClick={handleLoadMore}>
-              더 보기
+        {/* 더보기 버튼 제거 및 페이지네이션 추가 */}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              className="pagination-btn"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              이전
+            </button>
+            {getPageNumbers().map(page => (
+              <button
+                key={page}
+                className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+                onClick={() => handlePageChange(page)}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              className="pagination-btn"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              다음
             </button>
           </div>
         )}
