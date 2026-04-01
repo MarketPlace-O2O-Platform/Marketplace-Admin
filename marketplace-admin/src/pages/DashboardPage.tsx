@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -11,6 +12,8 @@ import './DashboardPage.css';
 interface TopReceiptMember {
   memberId: number;
   receiptCount: number;
+  completedCount: number;
+  pendingCount: number;
 }
 
 interface BreakdownStat {
@@ -26,6 +29,7 @@ interface ReceiptSubmissionStats {
 }
 
 const DashboardPage: React.FC = () => {
+  const navigate = useNavigate();
   const [todayStats, setTodayStats] = useState<TodayStats | null>(null);
   const [visitorCompare, setVisitorCompare] = useState<VisitorCompare | null>(null);
   const [weeklyAverage, setWeeklyAverage] = useState<number | null>(null);
@@ -35,7 +39,9 @@ const DashboardPage: React.FC = () => {
   const [paybackStats, setPaybackStats] = useState<{ avgCouponDownloadPerMember: number; paybackRate: number } | null>(null);
   const [recentPaybackStats, setRecentPaybackStats] = useState<{ recentSevenDaysMemberCount: number; avgPaybackCouponDownloadPerMember: number } | null>(null);
   const [topMarkets, setTopMarkets] = useState<TopMarket[]>([]);
+  const [topMarketsPeriod, setTopMarketsPeriod] = useState<string>('WEEK');
   const [topMarketsCompleted, setTopMarketsCompleted] = useState<TopMarket[]>([]);
+  const [topMarketsCompletedPeriod, setTopMarketsCompletedPeriod] = useState<string>('WEEK');
   const [topReceiptMembers, setTopReceiptMembers] = useState<TopReceiptMember[]>([]);
   const [receiptPeriod, setReceiptPeriod] = useState<string>('WEEK'); // 기본값 WEEK
   const [receiptSubmissionStats, setReceiptSubmissionStats] = useState<ReceiptSubmissionStats | null>(null);
@@ -47,6 +53,8 @@ const DashboardPage: React.FC = () => {
 
   useEffect(() => {
     loadAllStats();
+    loadTopMarkets(topMarketsPeriod);
+    loadTopMarketsCompleted(topMarketsCompletedPeriod);
     loadTopReceiptMembers(receiptPeriod);
     loadReceiptSubmissionStats('7D');
   }, []);
@@ -58,7 +66,6 @@ const DashboardPage: React.FC = () => {
         todayRes, compareRes, weeklyRes, recentVisitorsRes,
         signupRes, dailySignupRes,
         paybackRes, recentPaybackRes,
-        topMarketsRes, topMarketsCompletedRes,
       ] = await Promise.all([
         statsAPI.getTodayStats(),
         statsAPI.compareYesterday(),
@@ -68,8 +75,6 @@ const DashboardPage: React.FC = () => {
         statsAPI.getDailySignupStats(),
         statsAPI.getPaybackCouponStats(),
         statsAPI.getRecentPaybackCouponStats(),
-        statsAPI.getTopMarkets(),
-        statsAPI.getTopMarketsCompleted(),
       ]);
 
       setTodayStats(todayRes.response);
@@ -84,8 +89,6 @@ const DashboardPage: React.FC = () => {
       setDailySignups(dailySignupRes.response.dailyStats);
       setPaybackStats(paybackRes.response);
       setRecentPaybackStats(recentPaybackRes.response);
-      setTopMarkets(topMarketsRes.response);
-      setTopMarketsCompleted(topMarketsCompletedRes.response);
       setError('');
     } catch (err) {
       setError('통계 데이터를 불러오는데 실패했습니다.');
@@ -93,6 +96,48 @@ const DashboardPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadTopMarkets = async (period: string) => {
+    try {
+      const token = localStorage.getItem('marketplace_admin_token');
+      const query = period ? `?period=${period}` : '';
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://marketplace.inuappcenter.kr'}/api/admins/payback-coupons/stats/top-markets${query}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      setTopMarkets(data.response || []);
+    } catch (err) {
+      console.error('환급 쿠폰 발급 매장 로드 실패:', err);
+    }
+  };
+
+  const handleTopMarketsPeriodChange = (period: string) => {
+    setTopMarketsPeriod(period);
+    loadTopMarkets(period);
+  };
+
+  const loadTopMarketsCompleted = async (period: string) => {
+    try {
+      const token = localStorage.getItem('marketplace_admin_token');
+      const query = period ? `?period=${period}` : '';
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://marketplace.inuappcenter.kr'}/api/admins/payback-coupons/stats/top-markets/completed${query}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      setTopMarketsCompleted(data.response || []);
+    } catch (err) {
+      console.error('환급 완료 매장 로드 실패:', err);
+    }
+  };
+
+  const handleTopMarketsCompletedPeriodChange = (period: string) => {
+    setTopMarketsCompletedPeriod(period);
+    loadTopMarketsCompleted(period);
   };
 
   const loadTopReceiptMembers = async (period: string) => {
@@ -450,7 +495,43 @@ const DashboardPage: React.FC = () => {
         {/* Tables Section */}
         <div className="grid-2" style={{ marginBottom: 0 }}>
           <div className="dashboard-card">
-            <h3 className="section-title">🏆 환급 쿠폰 발급 Top 10</h3>
+            <div className="card-header" style={{ marginBottom: '16px' }}>
+              <h3 className="section-title">🏆 환급 쿠폰 발급 전체</h3>
+              <div className="card-header-actions" style={{ gap: '12px' }}>
+                <div className="period-selector">
+                  <button 
+                    className={`btn-period ${topMarketsPeriod === 'DAY' ? 'active' : ''}`}
+                    onClick={() => handleTopMarketsPeriodChange('DAY')}
+                  >
+                    1일
+                  </button>
+                  <button 
+                    className={`btn-period ${topMarketsPeriod === 'WEEK' ? 'active' : ''}`}
+                    onClick={() => handleTopMarketsPeriodChange('WEEK')}
+                  >
+                    1주
+                  </button>
+                  <button 
+                    className={`btn-period ${topMarketsPeriod === 'MONTH' ? 'active' : ''}`}
+                    onClick={() => handleTopMarketsPeriodChange('MONTH')}
+                  >
+                    1달
+                  </button>
+                  <button 
+                    className={`btn-period ${topMarketsPeriod === '' ? 'active' : ''}`}
+                    onClick={() => handleTopMarketsPeriodChange('')}
+                  >
+                    전체
+                  </button>
+                </div>
+                <button
+                  onClick={() => navigate('/top-markets-issued')}
+                  className="btn-more"
+                >
+                  더보기 →
+                </button>
+              </div>
+            </div>
             <table className="dashboard-table">
               <thead>
                 <tr>
@@ -460,7 +541,7 @@ const DashboardPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {topMarkets.slice(0, 10).map((market, index) => (
+                {topMarkets.slice(0, 5).map((market, index) => (
                   <tr key={market.marketId}>
                     <td className="dashboard-td">
                       <span className="rank-badge">{index + 1}</span>
@@ -479,7 +560,43 @@ const DashboardPage: React.FC = () => {
           </div>
 
           <div className="dashboard-card">
-            <h3 className="section-title">💰 환급 완료 매장 Top 10</h3>
+            <div className="card-header" style={{ marginBottom: '16px' }}>
+              <h3 className="section-title">💰 환급 완료 매장 전체</h3>
+              <div className="card-header-actions" style={{ gap: '12px' }}>
+                <div className="period-selector">
+                  <button 
+                    className={`btn-period ${topMarketsCompletedPeriod === 'DAY' ? 'active' : ''}`}
+                    onClick={() => handleTopMarketsCompletedPeriodChange('DAY')}
+                  >
+                    1일
+                  </button>
+                  <button 
+                    className={`btn-period ${topMarketsCompletedPeriod === 'WEEK' ? 'active' : ''}`}
+                    onClick={() => handleTopMarketsCompletedPeriodChange('WEEK')}
+                  >
+                    1주
+                  </button>
+                  <button 
+                    className={`btn-period ${topMarketsCompletedPeriod === 'MONTH' ? 'active' : ''}`}
+                    onClick={() => handleTopMarketsCompletedPeriodChange('MONTH')}
+                  >
+                    1달
+                  </button>
+                  <button 
+                    className={`btn-period ${topMarketsCompletedPeriod === '' ? 'active' : ''}`}
+                    onClick={() => handleTopMarketsCompletedPeriodChange('')}
+                  >
+                    전체
+                  </button>
+                </div>
+                <button
+                  onClick={() => navigate('/top-markets-issued')}
+                  className="btn-more"
+                >
+                  더보기 →
+                </button>
+              </div>
+            </div>
             <table className="dashboard-table">
               <thead>
                 <tr>
@@ -489,7 +606,7 @@ const DashboardPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {topMarketsCompleted.slice(0, 10).map((market, index) => (
+                {topMarketsCompleted.slice(0, 5).map((market, index) => (
                   <tr key={market.marketId}>
                     <td className="dashboard-td">
                       <span className="rank-badge">{index + 1}</span>
@@ -512,7 +629,7 @@ const DashboardPage: React.FC = () => {
         <div className="dashboard-card" style={{ marginTop: '24px' }}>
           <div className="card-header">
             <h3 className="section-title">🧾 영수증 인증 우수 회원</h3>
-            <div className="card-header-actions">
+            <div className="card-header-actions" style={{ gap: '12px' }}>
               <div className="period-selector">
                 <button 
                   className={`btn-period ${receiptPeriod === 'DAY' ? 'active' : ''}`}
@@ -539,29 +656,52 @@ const DashboardPage: React.FC = () => {
                   전체
                 </button>
               </div>
+              <button
+                onClick={() => window.location.href = '/top-receipt-members'}
+                className="btn-more"
+              >
+                더보기 →
+              </button>
             </div>
           </div>
           <table className="dashboard-table">
             <thead>
               <tr>
                 <th className="dashboard-th">순위</th>
-                <th className="dashboard-th">회원 학번(ID)</th>
-                <th className="dashboard-th text-right">인증 횟수</th>
+                <th className="dashboard-th">회원 학번</th>
+                <th className="dashboard-th text-right">전체</th>
+                <th className="dashboard-th text-right">완료</th>
+                <th className="dashboard-th text-right">대기</th>
+                <th className="dashboard-th text-right">관리</th>
               </tr>
             </thead>
             <tbody>
               {topReceiptMembers.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="dashboard-td text-center text-gray">데이터가 없습니다.</td>
+                  <td colSpan={6} className="dashboard-td text-center text-gray">데이터가 없습니다.</td>
                 </tr>
               ) : (
-                topReceiptMembers.map((member, index) => (
+                topReceiptMembers.slice(0, 5).map((member, index) => (
                   <tr key={member.memberId}>
                     <td className="dashboard-td">
                       <span className="rank-badge">{index + 1}</span>
                     </td>
                     <td className="dashboard-td font-medium">{member.memberId}</td>
-                    <td className="dashboard-td text-right font-semibold">{member.receiptCount}회</td>
+                    <td className="dashboard-td text-right">{member.receiptCount}회</td>
+                    <td className="dashboard-td text-right color-success">{member.completedCount}건</td>
+                    <td className="dashboard-td text-right">
+                      <span className={`status-tag ${member.pendingCount > 0 ? 'tag-warning' : 'tag-neutral'}`}>
+                        {member.pendingCount}건
+                      </span>
+                    </td>
+                    <td className="dashboard-td text-right">
+                      <button 
+                        onClick={() => navigate(`/receipt-members/${member.memberId}`)}
+                        className="btn-xs-link"
+                      >
+                        처리하기 →
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}

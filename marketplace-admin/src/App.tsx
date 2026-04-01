@@ -13,6 +13,10 @@ import PaybackReceiptDetailPage from './pages/PaybackReceiptDetailPage';
 import TempMarketsPage from './pages/TempMarketsPage';
 import TempMarketDetailPage from './pages/TempMarketDetailPage';
 import RequestMarketsPage from './pages/RequestMarketsPage';
+import TopMarketsIssuedPage from './pages/TopMarketsIssuedPage';
+import TopMarketsCompletedPage from './pages/TopMarketsCompletedPage';
+import TopReceiptMembersPage from './pages/TopReceiptMembersPage';
+import MemberReceiptDetailPage from './pages/MemberReceiptDetailPage';
 import PrivateRoute from './components/PrivateRoute';
 import { authUtils } from './utils/auth';
 import { loadKakaoMapScript } from './utils/kakaoMap';
@@ -92,6 +96,22 @@ function App() {
           <Route
             path="/request-markets"
             element={ <PrivateRoute> <RequestMarketsPage /> </PrivateRoute>}
+          />
+          <Route
+            path="/top-markets-issued"
+            element={ <PrivateRoute> <TopMarketsIssuedPage /> </PrivateRoute>}
+          />
+          <Route
+            path="/top-markets-completed"
+            element={ <PrivateRoute> <TopMarketsCompletedPage /> </PrivateRoute>}
+          />
+          <Route
+            path="/top-receipt-members"
+            element={ <PrivateRoute> <TopReceiptMembersPage /> </PrivateRoute>}
+          />
+          <Route
+            path="/receipt-members/:memberId"
+            element={ <PrivateRoute> <MemberReceiptDetailPage /> </PrivateRoute>}
           />
           <Route
             path="*"

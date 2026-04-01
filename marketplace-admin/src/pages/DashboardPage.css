@@ -265,3 +265,49 @@
 .date-input:focus {
   border-color: #6366f1;
 }
+
+.btn-more {
+  padding: 6px 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-more:hover {
+  background: #f3f4f6;
+  color: #111827;
+  border-color: #d1d5db;
+}
+
+/* 미환급 건수 강조를 위한 태그 스타일 */
+.status-tag {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tag-warning {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.tag-neutral {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+}
+
+.btn-xs-link {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}

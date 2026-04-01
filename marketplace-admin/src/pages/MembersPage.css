@@ -93,11 +93,6 @@
   font-size: 14px;
 }
 
-.load-more {
-  text-align: center;
-  margin-top: 24px;
-}
-
 /* 빈 상태와 로딩 상태 */
 .loading,
 .empty-state {

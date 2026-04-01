@@ -87,7 +87,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   ];
 
   const currentItem = menuItems.find(item => location.pathname.startsWith(item.path));
-  const pageTitle = currentItem ? currentItem.label : 'Kuromi Admin';
+  const pageTitle = currentItem ? currentItem.label : '쿠러미 관리자';
 
   return (
     <div className={`layout-container ${collapsed ? 'collapsed' : ''}`}>
