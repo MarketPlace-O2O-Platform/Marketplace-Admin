@@ -15,14 +15,14 @@ interface MemberStat {
 
 const PaybackReceiptsPage: React.FC = () => {
   const navigate = useNavigate();
-  const [viewMode, setViewMode] = useState<'all' | 'member'>('member');
+  const [viewMode, setViewMode] = useState<'all' | 'member'>('all');
   const [receipts, setReceipts] = useState<PaybackReceiptListItem[]>([]);
   const [memberStats, setMemberStats] = useState<MemberStat[]>([]);
+  const [memberPeriod, setMemberPeriod] = useState<string>('TODAY');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [memberPeriod, setMemberPeriod] = useState<string>('TODAY');
 
   const loadData = async () => {
     try {
@@ -33,10 +33,9 @@ const PaybackReceiptsPage: React.FC = () => {
         const response = await couponApi.getPaybackReceipts({ pageSize: 200 });
         setReceipts(response.response.couponResDtos);
       } else {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://marketplace.inuappcenter.kr'}/api/admins/payback-coupons/stats/top-members/receipt/calendar`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+        const query = memberPeriod ? `?period=${memberPeriod}` : '';
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://marketplace.inuappcenter.kr'}/api/admins/payback-coupons/stats/top-members/receipt/calendar${query}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
         setMemberStats(data.response || []);
@@ -44,7 +43,6 @@ const PaybackReceiptsPage: React.FC = () => {
       setError(null);
     } catch (err) {
       setError('데이터를 불러오는데 실패했습니다.');
-      console.error('Failed to load data:', err);
     } finally {
       setLoading(false);
     }
@@ -53,7 +51,7 @@ const PaybackReceiptsPage: React.FC = () => {
   useEffect(() => {
     loadData();
     setCurrentPage(1);
-  }, [viewMode]);
+  }, [viewMode, memberPeriod]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('ko-KR');
@@ -81,30 +79,58 @@ const PaybackReceiptsPage: React.FC = () => {
     setCurrentPage(1);
   };
 
+  const handleMemberPeriodChange = (period: string) => {
+    setMemberPeriod(period);
+    setCurrentPage(1);
+  };
+
   return (
     <Layout>
       <div className="payback-receipts-page">
         <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <h1>환급 쿠폰 관리</h1>
           <div className="view-mode-selector">
-            <button
-              className={`btn-view-mode ${viewMode === 'member' ? 'active' : ''}`}
-              onClick={() => setViewMode('member')}
-            >
-              회원별 목록보기
-            </button>
-            <button
+            <button 
               className={`btn-view-mode ${viewMode === 'all' ? 'active' : ''}`}
               onClick={() => setViewMode('all')}
             >
               전체 목록보기
+            </button>
+            <button 
+              className={`btn-view-mode ${viewMode === 'member' ? 'active' : ''}`}
+              onClick={() => setViewMode('member')}
+            >
+              회원별 목록보기
             </button>
           </div>
         </div>
 
         {error && <div className="error-message">{error}</div>}
 
-        <div className="controls-section">
+        <div className="controls-section" style={{ justifyContent: viewMode === 'member' ? 'space-between' : 'flex-end' }}>
+          {viewMode === 'member' && (
+            <div className="period-selector">
+              <button
+                className={`btn-period ${memberPeriod === 'TODAY' ? 'active' : ''}`}
+                onClick={() => handleMemberPeriodChange('TODAY')}
+              >
+                오늘
+              </button>
+              <button
+                className={`btn-period ${memberPeriod === 'WEEK' ? 'active' : ''}`}
+                onClick={() => handleMemberPeriodChange('WEEK')}
+              >
+                1주
+              </button>
+              <button
+                className={`btn-period ${memberPeriod === 'ALL' ? 'active' : ''}`}
+                onClick={() => handleMemberPeriodChange('ALL')}
+              >
+                전체
+              </button>
+            </div>
+          )}
+          
           <div className="page-size-selector">
             <span>표시:</span>
             {[10, 30, 50].map(size => (
@@ -127,10 +153,10 @@ const PaybackReceiptsPage: React.FC = () => {
                   <th>순번</th>
                   <th>회원 ID</th>
                   <th>쿠폰명</th>
-                  <th className="hide-on-mobile">발급일시</th>
-                  <th className="hide-on-mobile">영수증 제출일시</th>
-                  <th className="hide-on-mobile">계좌 정보</th>
-                  <th>환급 상태</th>
+                  <th>발급일시</th>
+                  <th>영수증 제출일시</th>
+                  <th>계좌 정보</th>
+                  <th>환급 여부</th>
                 </tr>
               ) : (
                 <tr>
@@ -155,9 +181,9 @@ const PaybackReceiptsPage: React.FC = () => {
                     <td>{startIndex + index + 1}</td>
                     <td>{receipt.memberId}</td>
                     <td className="coupon-name">{receipt.couponName}</td>
-                    <td className="hide-on-mobile">{formatDate(receipt.issuedAt)}</td>
-                    <td className="hide-on-mobile">{formatDate(receipt.receiptSubmittedAt)}</td>
-                    <td className="hide-on-mobile">
+                    <td>{formatDate(receipt.issuedAt)}</td>
+                    <td>{formatDate(receipt.receiptSubmittedAt)}</td>
+                    <td>
                       <div className="account-info">
                         <div>{receipt.account}</div>
                         <div className="account-number">{receipt.accountNumber}</div>
@@ -182,9 +208,8 @@ const PaybackReceiptsPage: React.FC = () => {
                       <button 
                         className="btn-xs-link"
                         onClick={() => navigate(`/receipt-members/${stat.memberId}`)}
-                        style={{ background: 'none', border: 'none', color: '#6366f1', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}
                       >
-                        회원 상세 →
+                        상세보기 →
                       </button>
                     </td>
                   </tr>
