@@ -119,8 +119,8 @@ const TopReceiptMembersPage: React.FC = () => {
       <div className="top-markets-container">
         <div className="page-header">
           <div>
-            <h1 className="page-title">🧾 영수증 인증 우수 회원 전체</h1>
-            <p className="page-subtitle">모든 영수증 인증 우수 회원을 확인하세요. (총 {members.length}명)</p>
+            <h1 className="page-title">🧾 영수증 인증 회원 목록</h1>
+            <p className="page-subtitle">모든 영수증 인증 회원을 확인하세요. (총 {members.length}명)</p>
           </div>
           <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">
             대시보드로 돌아가기

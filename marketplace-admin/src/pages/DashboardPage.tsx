@@ -628,7 +628,7 @@ const DashboardPage: React.FC = () => {
         {/* Top Receipt Members Section */}
         <div className="dashboard-card" style={{ marginTop: '24px' }}>
           <div className="card-header">
-            <h3 className="section-title">🧾 영수증 인증 우수 회원</h3>
+            <h3 className="section-title">🧾 영수증 인증 회원 목록</h3>
             <div className="card-header-actions" style={{ gap: '12px' }}>
               <div className="period-selector">
                 <button 
