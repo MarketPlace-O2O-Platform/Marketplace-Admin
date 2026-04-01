@@ -199,6 +199,15 @@
   background-color: #f9fafb;
 }
 
+@media (max-width: 768px) {
+  .member-receipt-container {
+    padding: 16px;
+  }
+  
+  .receipt-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
 /* Modal Styles */
 .receipt-modal {
   position: fixed;

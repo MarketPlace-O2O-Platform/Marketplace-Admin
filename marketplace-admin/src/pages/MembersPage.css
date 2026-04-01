@@ -109,6 +109,18 @@
   margin-bottom: 16px;
 }
 
+/* 테이블 컨테이너 추가 및 전역 스크롤 설정 */
+.table-container {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto; /* 해상도 상관없이 내용이 많으면 스크롤 발생 */
+  background: var(--bg-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  -webkit-overflow-scrolling: touch;
+}
+
 .members-table {
   width: 100%;
   border-collapse: collapse;
@@ -171,10 +183,12 @@
 @media (max-width: 1024px) {
   .members-page {
     padding: 16px;
+    overflow-x: hidden;
   }
 
   .table-container {
-    overflow-x: auto;
+    /* 모바일 전용 여백 조정 */
+    margin-bottom: 16px;
   }
 
   .members-table {
@@ -206,7 +220,7 @@
   }
 
   .members-table {
-    min-width: 900px;
+    min-width: 950px; /* 모바일에서 스크롤을 유도하기 위한 최소 너비 */
   }
 }
 
@@ -218,7 +232,7 @@
   .members-table th,
   .members-table td {
     padding: 8px 6px;
-    font-size: 12px;
+    font-size: 30px;
   }
 
   .role-filter {

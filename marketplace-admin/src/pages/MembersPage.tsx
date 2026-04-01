@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
+import Pagination from '../components/Pagination';
 import type { Member, MemberRole } from '../types/member';
 import { memberAPI } from '../api/member';
 import { MEMBER_ROLE_LABELS } from '../types/member';
@@ -49,25 +50,6 @@ const MembersPage: React.FC = () => {
   const totalPages = Math.ceil(filteredMembers.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const currentMembers = filteredMembers.slice(startIndex, startIndex + pageSize);
-
-  const getPageNumbers = () => {
-    const pages: number[] = [];
-    const maxPages = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxPages / 2));
-    let endPage = Math.min(totalPages, startPage + maxPages - 1);
-
-    if (endPage - startPage < maxPages - 1) {
-      startPage = Math.max(1, endPage - maxPages + 1);
-    }
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-    return pages;
-  };
-
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) setCurrentPage(page);
-  };
 
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
@@ -184,33 +166,11 @@ const MembersPage: React.FC = () => {
           </table>
         </div>
 
-             {totalPages > 1 && (
-          <div className="pagination">
-            <button
-              className="pagination-btn"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              이전
-            </button>
-            {getPageNumbers().map(page => (
-              <button
-                key={page}
-                className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              className="pagination-btn"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              다음
-            </button>
-          </div>
-        )}
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={setCurrentPage} 
+        />
         
         <div className="table-footer">
           <p className="results-info">

@@ -1,37 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import Pagination from '../components/Pagination';
 import { couponApi } from '../api/coupon';
 import type { PaybackReceiptListItem } from '../types/coupon';
 import './PaybackReceiptsPage.css';
 
+interface MemberStat {
+  memberId: number;
+  receiptCount: number;
+  completedCount: number;
+  pendingCount: number;
+}
+
 const PaybackReceiptsPage: React.FC = () => {
   const navigate = useNavigate();
+  const [viewMode, setViewMode] = useState<'all' | 'member'>('member');
   const [receipts, setReceipts] = useState<PaybackReceiptListItem[]>([]);
+  const [memberStats, setMemberStats] = useState<MemberStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const loadReceipts = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
-      // 페이지네이션 처리를 위해 넉넉한 데이터를 가져옵니다. 
-      // (실제 서비스에서는 백엔드에서 totalCount를 주거나 page/size 파라미터를 지원하는 것이 좋습니다)
-      const response = await couponApi.getPaybackReceipts({ pageSize: 200 });
-      setReceipts(response.response.couponResDtos);
+      const token = localStorage.getItem('marketplace_admin_token');
+
+      if (viewMode === 'all') {
+        const response = await couponApi.getPaybackReceipts({ pageSize: 200 });
+        setReceipts(response.response.couponResDtos);
+      } else {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://marketplace.inuappcenter.kr'}/api/admins/payback-coupons/stats/top-members/receipt/calendar`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        setMemberStats(data.response || []);
+      }
       setError(null);
     } catch (err) {
-      setError('환급 쿠폰 영수증 목록을 불러오는데 실패했습니다.');
-      console.error('Failed to load payback receipts:', err);
+      setError('데이터를 불러오는데 실패했습니다.');
+      console.error('Failed to load data:', err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadReceipts();
-  }, []);
+    loadData();
+    setCurrentPage(1);
+  }, [viewMode]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('ko-KR');
@@ -49,28 +70,10 @@ const PaybackReceiptsPage: React.FC = () => {
   };
 
   // 페이지네이션 계산
-  const totalPages = Math.ceil(receipts.length / pageSize);
+  const currentData = viewMode === 'all' ? receipts : memberStats;
+  const totalPages = Math.ceil(currentData.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
-  const currentReceipts = receipts.slice(startIndex, startIndex + pageSize);
-
-  const getPageNumbers = () => {
-    const pages: number[] = [];
-    const maxPages = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxPages / 2));
-    let endPage = Math.min(totalPages, startPage + maxPages - 1);
-
-    if (endPage - startPage < maxPages - 1) {
-      startPage = Math.max(1, endPage - maxPages + 1);
-    }
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-    return pages;
-  };
-
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) setCurrentPage(page);
-  };
+  const pagedData = currentData.slice(startIndex, startIndex + pageSize);
 
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
@@ -80,8 +83,22 @@ const PaybackReceiptsPage: React.FC = () => {
   return (
     <Layout>
       <div className="payback-receipts-page">
-        <div className="page-header">
+        <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <h1>환급 쿠폰 관리</h1>
+          <div className="view-mode-selector">
+            <button
+              className={`btn-view-mode ${viewMode === 'member' ? 'active' : ''}`}
+              onClick={() => setViewMode('member')}
+            >
+              회원별 목록보기
+            </button>
+            <button
+              className={`btn-view-mode ${viewMode === 'all' ? 'active' : ''}`}
+              onClick={() => setViewMode('all')}
+            >
+              전체 목록보기
+            </button>
+          </div>
         </div>
 
         {error && <div className="error-message">{error}</div>}
@@ -104,71 +121,85 @@ const PaybackReceiptsPage: React.FC = () => {
         <div className="table-container">
           <table className="coupon-table">
             <thead>
-              <tr>
-                <th>순번</th>
-                <th>회원 ID</th>
-                <th>쿠폰명</th>
-                <th>발급일시</th>
-                <th>영수증 제출일시</th>
-                <th>계좌 정보</th>
-                <th>환급 여부</th>
-              </tr>
+              {viewMode === 'all' ? (
+                <tr>
+                  <th>순번</th>
+                  <th>회원 ID</th>
+                  <th>쿠폰명</th>
+                  <th className="hide-on-mobile">발급일시</th>
+                  <th className="hide-on-mobile">영수증 제출일시</th>
+                  <th className="hide-on-mobile">계좌 정보</th>
+                  <th>환급 상태</th>
+                </tr>
+              ) : (
+                <tr>
+                  <th>순위</th>
+                  <th>회원 ID</th>
+                  <th className="text-right">전체 건수</th>
+                  <th className="text-right">완료 건수</th>
+                  <th className="text-right">대기 건수</th>
+                  <th>관리</th>
+                </tr>
+              )}
             </thead>
             <tbody>
-              {currentReceipts.map((receipt, index) => (
-                <tr
-                  key={receipt.memberPaybackId}
-                  className="receipt-row"
-                  onClick={() => handleReceiptClick(receipt.memberPaybackId)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <td>{startIndex + index + 1}</td>
-                  <td>{receipt.memberId}</td>
-                  <td className="coupon-name">{receipt.couponName}</td>
-                  <td>{formatDate(receipt.issuedAt)}</td>
-                  <td>{formatDate(receipt.receiptSubmittedAt)}</td>
-                  <td>
-                    <div className="account-info">
-                      <div>{receipt.account}</div>
-                      <div className="account-number">{receipt.accountNumber}</div>
-                    </div>
-                  </td>
-                  <td>{getPaybackStatusBadge(receipt.isPayback)}</td>
-                </tr>
-              ))}
+              {viewMode === 'all' ? (
+                (pagedData as PaybackReceiptListItem[]).map((receipt, index) => (
+                  <tr
+                    key={receipt.memberPaybackId}
+                    className="receipt-row"
+                    onClick={() => handleReceiptClick(receipt.memberPaybackId)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <td>{startIndex + index + 1}</td>
+                    <td>{receipt.memberId}</td>
+                    <td className="coupon-name">{receipt.couponName}</td>
+                    <td className="hide-on-mobile">{formatDate(receipt.issuedAt)}</td>
+                    <td className="hide-on-mobile">{formatDate(receipt.receiptSubmittedAt)}</td>
+                    <td className="hide-on-mobile">
+                      <div className="account-info">
+                        <div>{receipt.account}</div>
+                        <div className="account-number">{receipt.accountNumber}</div>
+                      </div>
+                    </td>
+                    <td>{getPaybackStatusBadge(receipt.isPayback)}</td>
+                  </tr>
+                ))
+              ) : (
+                (pagedData as MemberStat[]).map((stat, index) => (
+                  <tr key={stat.memberId}>
+                    <td>{startIndex + index + 1}</td>
+                    <td className="coupon-name">{stat.memberId}</td>
+                    <td className="text-right">{stat.receiptCount}건</td>
+                    <td className="text-right" style={{ color: '#059669', fontWeight: 600 }}>{stat.completedCount}건</td>
+                    <td className="text-right">
+                      <span className={`badge ${stat.pendingCount > 0 ? 'badge-warning' : 'badge-success'}`}>
+                        {stat.pendingCount}건 대기
+                      </span>
+                    </td>
+                    <td>
+                      <button 
+                        className="btn-xs-link"
+                        onClick={() => navigate(`/receipt-members/${stat.memberId}`)}
+                        style={{ background: 'none', border: 'none', color: '#6366f1', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}
+                      >
+                        회원 상세 →
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         {loading && <div className="loading">로딩 중...</div>}
 
-        {totalPages > 1 && (
-        <div className="pagination">
-          <button
-            className="pagination-btn"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            이전
-          </button>
-          {getPageNumbers().map(page => (
-            <button
-              key={page}
-              className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
-              onClick={() => handlePageChange(page)}
-            >
-              {page}
-            </button>
-          ))}
-          <button
-            className="pagination-btn"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            다음
-          </button>
-      </div>
-        )}
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={setCurrentPage} 
+        />
       </div>
     </Layout>
   );

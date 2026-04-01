@@ -50,7 +50,10 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    // 모바일 환경에서는 기본적으로 접힌 상태
+    return window.innerWidth <= 768;
+  });
   const navigate = useNavigate();
   const location = useLocation();
 

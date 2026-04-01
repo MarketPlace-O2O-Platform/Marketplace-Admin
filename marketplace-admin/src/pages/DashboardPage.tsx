@@ -249,7 +249,8 @@ const DashboardPage: React.FC = () => {
       <div className="dashboard-container">
         <header className="dashboard-header">
           <h1 className="dashboard-title">대시보드</h1>
-          <p className="dashboard-subtitle">오늘의 주요 지표와 트렌드를 확인하세요. (최종 업데이트: {new Date().toLocaleString()})</p>
+          <p className="dashboard-subtitle">오늘의 주요 지표와 트렌드를 확인하세요.</p>
+          <p className="dashboard-subtitle">(최종 업데이트: {new Date().toLocaleString()})</p>
         </header>
 
         {/* Top KPI Cards */}
@@ -313,7 +314,7 @@ const DashboardPage: React.FC = () => {
         <div className="grid-2">
           <div className="dashboard-card">
             <h3 className="section-title">주간 방문자 추이</h3>
-            <div style={{ width: '100%', height: 300 }}>
+            <div className="chart-wrapper" style={{ width: '100%', height: 300 }}>
               <ResponsiveContainer>
                 <AreaChart data={recentVisitors} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <defs>
@@ -328,13 +329,13 @@ const DashboardPage: React.FC = () => {
                     tickFormatter={formatDate} 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{fill: '#9ca3af', fontSize: 12}}
+                    tick={{fill: '#9ca3af'}}
                     dy={10}
                   />
                   <YAxis 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{fill: '#9ca3af', fontSize: 12}}
+                    tick={{fill: '#9ca3af'}}
                   />
                   <Tooltip 
                     contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}}
@@ -356,7 +357,7 @@ const DashboardPage: React.FC = () => {
 
           <div className="dashboard-card">
             <h3 className="section-title">일별 신규 가입자</h3>
-            <div style={{ width: '100%', height: 300 }}>
+            <div className="chart-wrapper" style={{ width: '100%', height: 300 }}>
               <ResponsiveContainer>
                 <BarChart data={dailySignups} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
@@ -365,13 +366,13 @@ const DashboardPage: React.FC = () => {
                     tickFormatter={formatDate} 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{fill: '#9ca3af', fontSize: 12}}
+                    tick={{fill: '#9ca3af'}}
                     dy={10}
                   />
                   <YAxis 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{fill: '#9ca3af', fontSize: 12}}
+                    tick={{fill: '#9ca3af'}}
                     allowDecimals={false}
                   />
                   <Tooltip 
@@ -393,7 +394,7 @@ const DashboardPage: React.FC = () => {
       <div className="dashboard-card">
         <div className="card-header">
           <h3 className="section-title">영수증 제출 추이</h3>
-          <div className="card-header-actions" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              <div className="card-header-actions">
             <div className="period-selector">
               <button 
                 className={`btn-period ${receiptSubmissionPeriod === '7D' ? 'active' : ''}`}
@@ -432,7 +433,7 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div style={{ width: '100%', height: 300 }}>
+            <div className="chart-wrapper" style={{ width: '100%', height: 300 }}>
           <ResponsiveContainer>
             <BarChart data={receiptSubmissionStats?.breakdown || []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
@@ -440,13 +441,13 @@ const DashboardPage: React.FC = () => {
                 dataKey="label" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{fill: '#9ca3af', fontSize: 12}}
+                tick={{fill: '#9ca3af'}}
                 dy={10}
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{fill: '#9ca3af', fontSize: 12}}
+                tick={{fill: '#9ca3af'}}
                 allowDecimals={false}
               />
               <Tooltip 

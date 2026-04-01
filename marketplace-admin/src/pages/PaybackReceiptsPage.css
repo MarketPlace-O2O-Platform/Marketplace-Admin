@@ -15,12 +15,13 @@
   margin: 0;
 }
 
-/* Pagination and Controls */
+/* --- Pagination and Controls --- */
 .controls-section {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 16px;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .page-size-selector {
@@ -93,38 +94,86 @@
   cursor: not-allowed;
 }
 
-/* 테이블 컨테이너 */
+/* --- Table Section --- */
 .table-container {
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(229, 231, 235, 0.5);
-  overflow: hidden;
+  overflow-x: auto; /* 가로 스크롤 활성화 */
+  overflow-y: auto; /* 세로 스크롤 활성화 */
+  max-height: 65vh;
   margin-bottom: 24px;
+  position: relative;
+  display: block; /* 블록 요소로 지정하여 너비 제한 적용 */
+  width: 100%;
+  max-width: 100%;
 }
 
 .coupon-table {
   width: 100%;
   border-collapse: collapse;
+  display: table;
+  min-width: 100%;
+}
+
+.coupon-table thead {
+  display: table-header-group;
+}
+
+.coupon-table tbody {
+  display: table-row-group;
 }
 
 .coupon-table th {
   text-align: left;
-  padding: 16px;
+  padding: 16px 4px;
   border-bottom: 1px solid #e5e7eb;
   font-size: 13px;
   font-weight: 600;
   color: #6b7280;
   background-color: #f9fafb;
   white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .coupon-table td {
-  padding: 16px;
+  padding: 16px 4px;
   border-bottom: 1px solid #f3f4f6;
   font-size: 14px;
   color: #374151;
   vertical-align: middle;
+}
+
+.view-mode-selector {
+  display: flex;
+  background-color: #e5e7eb;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.btn-view-mode, .view-mode-selector .btn-period {
+  border: none;
+  background: transparent;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-view-mode.active, .view-mode-selector .btn-period.active {
+  background-color: #ffffff;
+  color: #6366f1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.text-right {
+  text-align: right !important;
 }
 
 .coupon-table tbody tr:hover {
@@ -183,4 +232,93 @@
   padding: 16px;
   border-radius: 8px;
   margin-bottom: 24px;
+}
+
+/* --- Mobile Responsive Adjustments (Bottom of the file to prevent overrides) --- */
+@media (max-width: 768px) {
+  .payback-receipts-page {
+    padding: 12px;
+    overflow-x: hidden; /* 페이지 전체 가로 스크롤 방지 */
+  }
+
+  .btn-view-mode, .view-mode-selector .btn-period {
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .controls-section {
+    justify-content: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .btn-size {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .table-container {
+    overflow-x: scroll !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(100vh - 280px);
+    margin-bottom: 16px;
+  }
+
+  .coupon-table {
+    min-width: 800px !important;
+    display: table !important;
+  }
+
+  .coupon-table thead {
+    display: table-header-group !important;
+  }
+
+  .coupon-table tbody {
+    display: table-row-group !important;
+  }
+
+  .coupon-table th {
+    padding: 8px 4px;
+    font-size: 10px;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background-color: #f9fafb;
+    z-index: 10;
+  }
+
+  .coupon-table td {
+    padding: 8px 4px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .account-info {
+    font-size: 9px;
+  }
+
+  .badge {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+
+  .coupon-name {
+    font-size: 11px;
+  }
+
+  .pagination {
+    gap: 4px;
+    margin-top: 16px;
+  }
+
+  .pagination-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-width: 32px;
+  }
+
+  .btn-xs-link {
+    font-size: 11px !important;
+  }
 }

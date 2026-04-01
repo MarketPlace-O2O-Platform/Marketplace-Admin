@@ -24,14 +24,14 @@
 
 .grid-4 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   margin-bottom: 24px;
 }
 
 .grid-2 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
   margin-bottom: 24px;
 }
@@ -58,6 +58,7 @@
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .period-selector {
@@ -171,6 +172,11 @@
   border-bottom: 1px solid #f9fafb;
   font-size: 14px;
   color: #374151;
+}
+
+/* 차트 텍스트 기본 크기 설정 */
+.recharts-cartesian-axis-tick text {
+  font-size: 12px;
 }
 
 .font-medium {
@@ -310,4 +316,166 @@
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 1024px) {
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 12px;
+  }
+
+  .dashboard-header {
+    margin-bottom: 16px;
+  }
+
+  .dashboard-title {
+    font-size: 18px;
+  }
+
+  .dashboard-subtitle {
+    font-size: 12px;
+  }
+
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .grid-2 {
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .card-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .date-input-group {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    font-size: 11px;
+  }
+
+  .section-title {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .metric-value {
+    font-size: 20px;
+    margin: 4px 0;
+  }
+
+  .metric-value.large {
+    font-size: 18px;
+  }
+
+  .metric-sub {
+    font-size: 11px;
+  }
+
+  .icon-box {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .dashboard-card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .chart-wrapper {
+    height: 200px !important;
+  }
+
+  .dashboard-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .dashboard-th {
+    padding: 10px 8px;
+    font-size: 10px;
+  }
+
+  .dashboard-td {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  /* 차트 툴팁 및 라벨 모바일 최적화 */
+  .recharts-cartesian-axis-tick text {
+    font-size: 9px;
+  }
+
+  .recharts-default-tooltip {
+    padding: 4px 8px !important;
+    font-size: 10px !important;
+    border-radius: 6px !important;
+  }
+
+  .btn-period {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+
+  .btn-more {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .date-input {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+
+  .rank-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  .status-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .btn-xs-link {
+    font-size: 11px;
+  }
+
+  .trend-box {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .progress-bg {
+    height: 3px;
+    margin-top: 4px;
+  }
 }
