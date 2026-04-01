@@ -54,6 +54,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     // 모바일 환경에서는 기본적으로 접힌 상태
     return window.innerWidth <= 768;
   });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -93,7 +94,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const pageTitle = currentItem ? currentItem.label : '쿠러미 관리자';
 
   return (
-    <div className={`layout-container ${collapsed ? 'collapsed' : ''}`}>
+    <div className={`layout-container ${collapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
+      {/* Mobile Overlay */}
+      {mobileMenuOpen && (
+        <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)}></div>
+      )}
+
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-header">
@@ -145,6 +151,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Main Content */}
       <div className="main-wrapper">
         <header className="top-header">
+          <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <Icons.Menu />
+          </button>
           <h2 className="header-page-title">{pageTitle}</h2>
         </header>
 

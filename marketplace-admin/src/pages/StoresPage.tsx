@@ -23,7 +23,7 @@ const StoresPage: React.FC = () => {
   const [editingStores, setEditingStores] = useState<Store[]>([]);
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; store: Store | null }>({ isOpen: false, store: null });
 
-  const loadStores = async (cursor?: number, isLoadMore = false) => {
+  const loadStores = async () => {
     try {
       setLoading(true);
       // 페이지네이션 구현을 위해 충분한 양을 가져오거나, 백엔드 사양에 맞춰 호출합니다.

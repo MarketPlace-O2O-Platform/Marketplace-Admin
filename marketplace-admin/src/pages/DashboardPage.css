@@ -318,6 +318,31 @@
   text-decoration: underline;
 }
 
+/* Accordion Styles */
+.accordion-card {
+  overflow: hidden;
+}
+
+.accordion-header {
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.accordion-header:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  margin: -8px;
+  padding: 8px;
+}
+
+.accordion-icon {
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 12px;
+  transition: transform 0.3s;
+  color: #6b7280;
+}
+
 /* Mobile Responsive Adjustments */
 @media (max-width: 1024px) {
   .grid-4 {

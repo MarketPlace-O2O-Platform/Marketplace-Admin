@@ -50,6 +50,18 @@ const DashboardPage: React.FC = () => {
   const [customEndDate, setCustomEndDate] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [accordionStates, setAccordionStates] = useState({
+    topMarkets: true,
+    topMarketsCompleted: true,
+    topReceiptMembers: true,
+  });
+
+  const toggleAccordion = (key: keyof typeof accordionStates) => {
+    setAccordionStates(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
 
   useEffect(() => {
     loadAllStats();
@@ -495,30 +507,33 @@ const DashboardPage: React.FC = () => {
 
         {/* Tables Section */}
         <div className="grid-2" style={{ marginBottom: 0 }}>
-          <div className="dashboard-card">
-            <div className="card-header" style={{ marginBottom: '16px' }}>
-              <h3 className="section-title">🏆 환급 쿠폰 발급 전체</h3>
-              <div className="card-header-actions" style={{ gap: '12px' }}>
+          <div className="dashboard-card accordion-card">
+            <div className="card-header accordion-header" style={{ marginBottom: accordionStates.topMarkets ? '16px' : '0', cursor: 'pointer' }} onClick={() => toggleAccordion('topMarkets')}>
+              <h3 className="section-title">
+                <span className="accordion-icon">{accordionStates.topMarkets ? '▼' : '▶'}</span>
+                🏆 환급 쿠폰 발급 전체
+              </h3>
+              <div className="card-header-actions" style={{ gap: '12px' }} onClick={(e) => e.stopPropagation()}>
                 <div className="period-selector">
-                  <button 
+                  <button
                     className={`btn-period ${topMarketsPeriod === 'DAY' ? 'active' : ''}`}
                     onClick={() => handleTopMarketsPeriodChange('DAY')}
                   >
                     1일
                   </button>
-                  <button 
+                  <button
                     className={`btn-period ${topMarketsPeriod === 'WEEK' ? 'active' : ''}`}
                     onClick={() => handleTopMarketsPeriodChange('WEEK')}
                   >
                     1주
                   </button>
-                  <button 
+                  <button
                     className={`btn-period ${topMarketsPeriod === 'MONTH' ? 'active' : ''}`}
                     onClick={() => handleTopMarketsPeriodChange('MONTH')}
                   >
                     1달
                   </button>
-                  <button 
+                  <button
                     className={`btn-period ${topMarketsPeriod === '' ? 'active' : ''}`}
                     onClick={() => handleTopMarketsPeriodChange('')}
                   >
@@ -533,6 +548,7 @@ const DashboardPage: React.FC = () => {
                 </button>
               </div>
             </div>
+            {accordionStates.topMarkets && (
             <table className="dashboard-table">
               <thead>
                 <tr>
@@ -558,32 +574,36 @@ const DashboardPage: React.FC = () => {
                 )}
               </tbody>
             </table>
+            )}
           </div>
 
-          <div className="dashboard-card">
-            <div className="card-header" style={{ marginBottom: '16px' }}>
-              <h3 className="section-title">💰 환급 완료 매장 전체</h3>
-              <div className="card-header-actions" style={{ gap: '12px' }}>
+          <div className="dashboard-card accordion-card">
+            <div className="card-header accordion-header" style={{ marginBottom: accordionStates.topMarketsCompleted ? '16px' : '0', cursor: 'pointer' }} onClick={() => toggleAccordion('topMarketsCompleted')}>
+              <h3 className="section-title">
+                <span className="accordion-icon">{accordionStates.topMarketsCompleted ? '▼' : '▶'}</span>
+                💰 환급 완료 매장 전체
+              </h3>
+              <div className="card-header-actions" style={{ gap: '12px' }} onClick={(e) => e.stopPropagation()}>
                 <div className="period-selector">
-                  <button 
+                  <button
                     className={`btn-period ${topMarketsCompletedPeriod === 'DAY' ? 'active' : ''}`}
                     onClick={() => handleTopMarketsCompletedPeriodChange('DAY')}
                   >
                     1일
                   </button>
-                  <button 
+                  <button
                     className={`btn-period ${topMarketsCompletedPeriod === 'WEEK' ? 'active' : ''}`}
                     onClick={() => handleTopMarketsCompletedPeriodChange('WEEK')}
                   >
                     1주
                   </button>
-                  <button 
+                  <button
                     className={`btn-period ${topMarketsCompletedPeriod === 'MONTH' ? 'active' : ''}`}
                     onClick={() => handleTopMarketsCompletedPeriodChange('MONTH')}
                   >
                     1달
                   </button>
-                  <button 
+                  <button
                     className={`btn-period ${topMarketsCompletedPeriod === '' ? 'active' : ''}`}
                     onClick={() => handleTopMarketsCompletedPeriodChange('')}
                   >
@@ -598,6 +618,7 @@ const DashboardPage: React.FC = () => {
                 </button>
               </div>
             </div>
+            {accordionStates.topMarketsCompleted && (
             <table className="dashboard-table">
               <thead>
                 <tr>
@@ -623,16 +644,20 @@ const DashboardPage: React.FC = () => {
                 )}
               </tbody>
             </table>
+            )}
           </div>
         </div>
 
         {/* Top Receipt Members Section */}
-        <div className="dashboard-card" style={{ marginTop: '24px' }}>
-          <div className="card-header">
-            <h3 className="section-title">🧾 영수증 인증 회원 목록</h3>
-            <div className="card-header-actions" style={{ gap: '12px' }}>
+        <div className="dashboard-card accordion-card" style={{ marginTop: '24px' }}>
+          <div className="card-header accordion-header" style={{ cursor: 'pointer' }} onClick={() => toggleAccordion('topReceiptMembers')}>
+            <h3 className="section-title">
+              <span className="accordion-icon">{accordionStates.topReceiptMembers ? '▼' : '▶'}</span>
+              🧾 영수증 인증 회원 목록
+            </h3>
+            <div className="card-header-actions" style={{ gap: '12px' }} onClick={(e) => e.stopPropagation()}>
               <div className="period-selector">
-                <button 
+                <button
                   className={`btn-period ${receiptPeriod === 'DAY' ? 'active' : ''}`}
                   onClick={() => handlePeriodChange('DAY')}
                 >
@@ -665,6 +690,7 @@ const DashboardPage: React.FC = () => {
               </button>
             </div>
           </div>
+          {accordionStates.topReceiptMembers && (
           <table className="dashboard-table">
             <thead>
               <tr>
@@ -708,6 +734,7 @@ const DashboardPage: React.FC = () => {
               )}
             </tbody>
           </table>
+          )}
         </div>
       </div>
     </Layout>
