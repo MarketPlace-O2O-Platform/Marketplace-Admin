@@ -87,6 +87,34 @@
   font-family: 'Monaco', monospace;
 }
 
+.account-number-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: #6b7280;
+  border-radius: 4px;
+}
+
+.copy-btn:hover {
+  color: #6366f1;
+  background: #f3f4f6;
+}
+
+.copy-btn:active {
+  transform: scale(0.95);
+}
+
 .stat-content {
   display: flex;
   align-items: baseline;
@@ -203,7 +231,72 @@
   .member-receipt-container {
     padding: 16px;
   }
-  
+
+  .summary-compact-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .summary-compact-grid .compact-card.info-card {
+    grid-column: 1 / -1;
+  }
+
+  .compact-card {
+    padding: 12px;
+  }
+
+  /* 모바일에서 stat 카드는 아이콘 숨기고 완전히 한 줄로 */
+  .compact-card.stat-card {
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+  }
+
+  .compact-card.stat-card .compact-card-header {
+    display: contents;
+    margin-bottom: 0;
+  }
+
+  .compact-card.stat-card .compact-icon {
+    display: none;
+  }
+
+  .compact-card.stat-card .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+    margin-right: 8px;
+  }
+
+  .compact-card.stat-card .stat-content {
+    display: contents;
+    margin-top: 0;
+  }
+
+  .compact-card.stat-card .metric-value-sm {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .compact-card.stat-card .metric-unit {
+    font-size: 13px;
+    margin-left: 2px;
+  }
+
+  .compact-card.stat-card.pending .metric-value-sm {
+    color: #d97706;
+  }
+
+  .compact-card.stat-card.completed .metric-value-sm {
+    color: #059669;
+  }
+
+  .info-label,
+  .info-value {
+    font-size: 12px;
+  }
+
   .receipt-card-grid {
     grid-template-columns: 1fr;
   }

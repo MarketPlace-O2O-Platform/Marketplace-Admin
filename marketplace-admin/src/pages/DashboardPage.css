@@ -6,7 +6,7 @@
 }
 
 .dashboard-header {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .dashboard-title {
@@ -20,6 +20,35 @@
   font-size: 14px;
   color: #6b7280;
   margin-top: 4px;
+}
+
+/* Quick Navigation */
+.quick-nav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.quick-nav-btn {
+  padding: 10px 20px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.quick-nav-btn:hover {
+  background: #f9fafb;
+  border-color: #6366f1;
+  color: #6366f1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .grid-4 {
@@ -369,6 +398,18 @@
 
   .dashboard-subtitle {
     font-size: 12px;
+  }
+
+  .quick-nav {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .quick-nav-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+    flex: 1;
+    min-width: calc(50% - 4px);
   }
 
   .grid-4 {

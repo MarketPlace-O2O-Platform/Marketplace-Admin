@@ -101,6 +101,14 @@ const MemberReceiptDetailPage: React.FC = () => {
     return `${import.meta.env.VITE_API_BASE_URL || 'https://marketplace.inuappcenter.kr'}/image/receipt/${receiptUrl}`;
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('계좌번호가 복사되었습니다.');
+    }).catch(() => {
+      alert('복사에 실패했습니다.');
+    });
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -156,7 +164,19 @@ const MemberReceiptDetailPage: React.FC = () => {
                 <span className="info-value">{data.account}</span>
               </div>
               <div className="info-row">
-                <span className="info-label">계좌번호</span>
+                <div className="account-number-wrapper">
+                  <span className="info-label">계좌번호</span>
+                  <button
+                    className="copy-btn"
+                    onClick={() => copyToClipboard(data.accountNumber)}
+                    title="계좌번호 복사"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
                 <span className="info-value highlight">{data.accountNumber}</span>
               </div>
             </div>

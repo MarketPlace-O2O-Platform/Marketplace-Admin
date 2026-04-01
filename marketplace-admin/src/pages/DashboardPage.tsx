@@ -51,9 +51,9 @@ const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [accordionStates, setAccordionStates] = useState({
-    topMarkets: true,
-    topMarketsCompleted: true,
-    topReceiptMembers: true,
+    topMarkets: false,
+    topMarketsCompleted: false,
+    topReceiptMembers: false,
   });
 
   const toggleAccordion = (key: keyof typeof accordionStates) => {
@@ -264,6 +264,28 @@ const DashboardPage: React.FC = () => {
           <p className="dashboard-subtitle">오늘의 주요 지표와 트렌드를 확인하세요.</p>
           <p className="dashboard-subtitle">(최종 업데이트: {new Date().toLocaleString()})</p>
         </header>
+
+        {/* Quick Navigation */}
+        <div className="quick-nav">
+          <button onClick={() => navigate('/users')} className="quick-nav-btn">
+            👥 유저관리
+          </button>
+          <button onClick={() => navigate('/stores')} className="quick-nav-btn">
+            🏪 매장관리
+          </button>
+          <button onClick={() => navigate('/coupons')} className="quick-nav-btn">
+            🎫 쿠폰관리
+          </button>
+          <button onClick={() => navigate('/temp-markets')} className="quick-nav-btn">
+            ❤️ 공감매장
+          </button>
+          <button onClick={() => navigate('/request-markets')} className="quick-nav-btn">
+            📝 요청매장
+          </button>
+          <button onClick={() => navigate('/payback-receipts')} className="quick-nav-btn">
+            💰 환급영수증
+          </button>
+        </div>
 
         {/* Top KPI Cards */}
         <div className="grid-4">

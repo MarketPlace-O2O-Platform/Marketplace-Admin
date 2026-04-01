@@ -115,6 +115,7 @@
   border-collapse: collapse;
   display: table;
   min-width: 100%;
+  table-layout: fixed;
 }
 
 .coupon-table thead {
@@ -137,6 +138,24 @@
   position: sticky;
   top: 0;
   z-index: 10;
+}
+
+.coupon-table th:nth-child(1) {
+  width: 10%;
+}
+
+.coupon-table th:nth-child(2) {
+  width: 20%;
+}
+
+.coupon-table th:nth-child(3),
+.coupon-table th:nth-child(4),
+.coupon-table th:nth-child(5) {
+  width: 15%;
+}
+
+.coupon-table th:nth-child(6) {
+  width: 25%;
 }
 
 .coupon-table td {
@@ -241,10 +260,22 @@
     overflow-x: hidden; /* 페이지 전체 가로 스크롤 방지 */
   }
 
+  .page-header {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .view-mode-selector {
+    width: 100%;
+    display: flex;
+  }
+
   .btn-view-mode, .view-mode-selector .btn-period {
     flex: 1;
-    padding: 6px 8px;
+    padding: 8px 12px;
     font-size: 12px;
+    white-space: nowrap;
   }
 
   .controls-section {
