@@ -73,7 +73,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('marketplace_admin_token');
-    navigate('/login');
+    navigate('/login', { replace: true });
   };
 
   const toggleSidebar = () => {
