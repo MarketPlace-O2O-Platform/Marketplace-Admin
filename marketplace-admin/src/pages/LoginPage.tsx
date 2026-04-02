@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../api/auth';
 import './LoginPage.css';
 
 const LoginPage: React.FC = () => {
-  const navigate = useNavigate();
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,7 +19,7 @@ const LoginPage: React.FC = () => {
 
       if (response.response) {
         localStorage.setItem('marketplace_admin_token', response.response);
-        navigate('/dashboard', { replace: true });
+        window.location.href = '/dashboard';
       } else {
         setError('아이디 또는 비밀번호가 일치하지 않습니다.');
       }
