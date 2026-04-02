@@ -45,11 +45,9 @@ const DashboardPage: React.FC = () => {
   const [topReceiptMembers, setTopReceiptMembers] = useState<TopReceiptMember[]>([]);
   const [receiptPeriod, setReceiptPeriod] = useState<string>('WEEK'); // 기본값 WEEK
   const [receiptSubmissionStats, setReceiptSubmissionStats] = useState<ReceiptSubmissionStats | null>(null);
-  const [receiptSubmissionPeriod, setReceiptSubmissionPeriod] = useState<string>('CUSTOM');
+  const [receiptSubmissionPeriod, setReceiptSubmissionPeriod] = useState<string>('7D');
   const [customStartDate, setCustomStartDate] = useState<string>(() => {
-    const date = new Date();
-    date.setDate(date.getDate() - 7);
-    return date.toISOString().split('T')[0];
+    return new Date().toISOString().split('T')[0];
   });
   const [customEndDate, setCustomEndDate] = useState<string>(() => {
     return new Date().toISOString().split('T')[0];
@@ -75,11 +73,7 @@ const DashboardPage: React.FC = () => {
     loadTopMarkets(topMarketsPeriod);
     loadTopMarketsCompleted(topMarketsCompletedPeriod);
     loadTopReceiptMembers(receiptPeriod);
-    const today = new Date().toISOString().split('T')[0];
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const startDate = sevenDaysAgo.toISOString().split('T')[0];
-    loadReceiptSubmissionStats('', startDate, today);
+    loadReceiptSubmissionStats('7D');
   }, []);
 
   const loadAllStats = async () => {
@@ -209,14 +203,20 @@ const DashboardPage: React.FC = () => {
 
   const handleReceiptSubmissionPeriodChange = (period: string) => {
     setReceiptSubmissionPeriod(period);
-    setCustomStartDate('');
-    setCustomEndDate('');
+    const today = new Date().toISOString().split('T')[0];
+    setCustomStartDate(today);
+    setCustomEndDate(today);
     loadReceiptSubmissionStats(period);
   };
 
   const handleCustomDateSearch = () => {
+    const today = new Date().toISOString().split('T')[0];
     if (!customStartDate || !customEndDate) {
       alert('시작일과 종료일을 모두 선택해주세요.');
+      return;
+    }
+    if (customStartDate > today || customEndDate > today) {
+      alert('미래 날짜는 선택할 수 없습니다.');
       return;
     }
     if (customStartDate > customEndDate) {
@@ -225,6 +225,7 @@ const DashboardPage: React.FC = () => {
     }
     setReceiptSubmissionPeriod('CUSTOM');
     loadReceiptSubmissionStats('', customStartDate, customEndDate);
+    setShowDateModal(false);
   };
 
   const formatDate = (value: string) => {
@@ -470,7 +471,12 @@ const DashboardPage: React.FC = () => {
               </button>
               <button
                 className={`btn-period ${receiptSubmissionPeriod === 'CUSTOM' ? 'active' : ''}`}
-                onClick={() => setShowDateModal(true)}
+                onClick={() => {
+                  const today = new Date().toISOString().split('T')[0];
+                  setCustomStartDate(today);
+                  setCustomEndDate(today);
+                  setShowDateModal(true);
+                }}
               >
                 날짜 선택
               </button>
@@ -777,6 +783,9 @@ const DashboardPage: React.FC = () => {
       {/* 날짜 선택 모달 */}
       {showDateModal && (
         <div className="dashboard-modal-overlay" onClick={() => setShowDateModal(false)}>
+          {(() => {
+            const today = new Date().toISOString().split('T')[0];
+            return (
           <div className="dashboard-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="dashboard-modal-header">
               <h3>날짜 선택</h3>
@@ -790,6 +799,7 @@ const DashboardPage: React.FC = () => {
                   className="date-input"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
+                  max={today}
                 />
               </div>
               <div className="dashboard-date-picker-group">
@@ -799,6 +809,7 @@ const DashboardPage: React.FC = () => {
                   className="date-input"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
+                  max={today}
                 />
               </div>
             </div>
@@ -806,16 +817,14 @@ const DashboardPage: React.FC = () => {
               <button className="dashboard-btn-cancel" onClick={() => setShowDateModal(false)}>취소</button>
               <button
                 className="dashboard-btn-confirm"
-                onClick={() => {
-                  setReceiptSubmissionPeriod('CUSTOM');
-                  loadReceiptSubmissionStats('', customStartDate, customEndDate);
-                  setShowDateModal(false);
-                }}
+                onClick={handleCustomDateSearch}
               >
                 조회
               </button>
             </div>
           </div>
+            );
+          })()}
         </div>
       )}
     </Layout>

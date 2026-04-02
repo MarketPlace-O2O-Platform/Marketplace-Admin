@@ -221,7 +221,6 @@ const CouponsPage: React.FC = () => {
     <Layout>
       <div className="coupons-page">
         <div className="page-header">
-          <h1>쿠폰 관리</h1>
           <div className="header-actions">
             {selectedCoupons.size > 0 && (
               <>

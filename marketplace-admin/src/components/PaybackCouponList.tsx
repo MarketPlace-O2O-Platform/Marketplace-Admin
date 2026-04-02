@@ -167,7 +167,6 @@ const PaybackCouponList: React.FC<PaybackCouponListProps> = ({ marketId, marketN
   return (
     <div className="payback-coupon-list">
       <div className="section-header">
-        <h3>{marketName} 환급쿠폰</h3>
         <div className="header-actions">
           {selectedCoupons.length > 0 && (
             <button

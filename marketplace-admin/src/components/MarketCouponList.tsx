@@ -164,7 +164,6 @@ const GiftCouponList: React.FC<MarketCouponListProps> = ({ marketId, marketName 
   return (
     <div className="gift-coupon-list">
       <div className="section-header">
-        <h3>{marketName} 증정쿠폰</h3>
         <div className="header-actions">
           {selectedCoupons.length > 0 && (
             <button
@@ -284,10 +283,6 @@ const MarketCouponList: React.FC<MarketCouponListProps> = ({ marketId, marketNam
 
   return (
     <div className="market-coupon-list">
-      <div className="section-header">
-        <h3>{marketName} 쿠폰 관리</h3>
-      </div>
-
       <div className="tab-navigation">
         <button
           className={`tab-button ${activeTab === 'gift' ? 'active' : ''}`}
