@@ -487,7 +487,7 @@ const DashboardPage: React.FC = () => {
                 tickLine={false} 
                 tick={{fill: '#9ca3af'}}
                 dy={10}
-                interval={0}
+                interval={receiptSubmissionPeriod === '7D' ? 0 : 'preserveStartEnd'}
                 angle={-30}
                 textAnchor="end"
                 height={60}
