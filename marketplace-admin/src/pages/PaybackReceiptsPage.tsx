@@ -19,6 +19,7 @@ const PaybackReceiptsPage: React.FC = () => {
   const [receipts, setReceipts] = useState<PaybackReceiptListItem[]>([]);
   const [memberStats, setMemberStats] = useState<MemberStat[]>([]);
   const [memberPeriod, setMemberPeriod] = useState<string>('TODAY');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'COMPLETED'>('ALL');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -69,8 +70,14 @@ const PaybackReceiptsPage: React.FC = () => {
   };
 
   // 페이지네이션 계산
-  const currentData = viewMode === 'all' ? receipts : memberStats;
-  const totalPages = Math.ceil(currentData.length / pageSize);
+  const filteredReceipts = receipts.filter(r => {
+    if (statusFilter === 'PENDING') return !r.isPayback;
+    if (statusFilter === 'COMPLETED') return r.isPayback;
+    return true;
+  });
+
+  const currentData = viewMode === 'all' ? filteredReceipts : memberStats;
+  const totalPages = Math.ceil((currentData?.length || 0) / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const pagedData = currentData.slice(startIndex, startIndex + pageSize);
 
@@ -90,24 +97,24 @@ const PaybackReceiptsPage: React.FC = () => {
         <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <h1>환급 쿠폰 관리</h1>
           <div className="view-mode-selector">
-            <button 
-              className={`btn-view-mode ${viewMode === 'all' ? 'active' : ''}`}
-              onClick={() => setViewMode('all')}
-            >
-              전체 목록보기
-            </button>
-            <button 
+            <button
               className={`btn-view-mode ${viewMode === 'member' ? 'active' : ''}`}
               onClick={() => setViewMode('member')}
             >
               회원별 목록보기
+            </button>
+            <button
+              className={`btn-view-mode ${viewMode === 'all' ? 'active' : ''}`}
+              onClick={() => setViewMode('all')}
+            >
+              전체 목록보기
             </button>
           </div>
         </div>
 
         {error && <div className="error-message">{error}</div>}
 
-        <div className="controls-section" style={{ justifyContent: viewMode === 'member' ? 'space-between' : 'flex-end' }}>
+        <div className="controls-section">
           {viewMode === 'member' && (
             <div className="period-selector">
               <button
@@ -120,10 +127,56 @@ const PaybackReceiptsPage: React.FC = () => {
                 className={`btn-period ${memberPeriod === 'WEEK' ? 'active' : ''}`}
                 onClick={() => handleMemberPeriodChange('WEEK')}
               >
-                1주
+                이번주
               </button>
               <button
                 className={`btn-period ${memberPeriod === 'ALL' ? 'active' : ''}`}
+                onClick={() => handleMemberPeriodChange('ALL')}
+              >
+                전체
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="controls-section" style={{ justifyContent: 'space-between' }}>
+          {viewMode === 'all' ? (
+            <div className="view-mode-selector">
+              <button
+                className={`btn-view-mode ${statusFilter === 'ALL' ? 'active' : ''}`}
+                onClick={() => { setStatusFilter('ALL'); setCurrentPage(1); }}
+              >
+                전체
+              </button>
+              <button
+                className={`btn-view-mode ${statusFilter === 'PENDING' ? 'active' : ''}`}
+                onClick={() => { setStatusFilter('PENDING'); setCurrentPage(1); }}
+              >
+                대기
+              </button>
+              <button
+                className={`btn-view-mode ${statusFilter === 'COMPLETED' ? 'active' : ''}`}
+                onClick={() => { setStatusFilter('COMPLETED'); setCurrentPage(1); }}
+              >
+                완료
+              </button>
+            </div>
+          ) : (
+            <div className="view-mode-selector">
+              <button
+                className={`btn-period ${memberPeriod === 'TODAY' ? 'active' : ''}`}
+                onClick={() => handleMemberPeriodChange('TODAY')}
+              >
+                오늘
+              </button>
+              <button
+                className={`btn-view-mode ${memberPeriod === 'WEEK' ? 'active' : ''}`}
+                onClick={() => handleMemberPeriodChange('WEEK')}
+              >
+                1주
+              </button>
+              <button
+                className={`btn-view-mode ${memberPeriod === 'ALL' ? 'active' : ''}`}
                 onClick={() => handleMemberPeriodChange('ALL')}
               >
                 전체
@@ -150,22 +203,22 @@ const PaybackReceiptsPage: React.FC = () => {
             <thead>
               {viewMode === 'all' ? (
                 <tr>
-                  <th>순번</th>
-                  <th>회원 ID</th>
-                  <th>쿠폰명</th>
-                  <th>발급일시</th>
-                  <th>영수증 제출일시</th>
-                  <th>계좌 정보</th>
-                  <th>환급 여부</th>
+                  <th className="col-rank">순번</th>
+                  <th className="col-id">회원 ID</th>
+                  <th className="col-name">쿠폰명</th>
+                  <th className="col-date">발급일시</th>
+                  <th className="col-date">영수증 제출일시</th>
+                  <th className="col-account">계좌 정보</th>
+                  <th className="col-status">환급 여부</th>
                 </tr>
               ) : (
                 <tr>
-                  <th>순위</th>
-                  <th>회원 ID</th>
-                  <th className="text-right">전체 건수</th>
-                  <th className="text-right">완료 건수</th>
-                  <th className="text-right">대기 건수</th>
-                  <th>관리</th>
+                  <th className="col-rank">순위</th>
+                  <th className="col-id">회원 ID</th>
+                  <th className="col-stat text-right">전체 건수</th>
+                  <th className="col-stat text-right">완료 건수</th>
+                  <th className="col-stat text-right">대기 건수</th>
+                  <th className="col-action">관리</th>
                 </tr>
               )}
             </thead>

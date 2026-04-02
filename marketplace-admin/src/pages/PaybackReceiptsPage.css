@@ -58,6 +58,36 @@
   border-color: #6366f1;
 }
 
+.period-selector {
+  display: flex;
+  background-color: #f3f4f6;
+  padding: 4px;
+  border-radius: 8px;
+  gap: 4px;
+}
+
+.btn-period {
+  border: none;
+  background: transparent;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-period:hover {
+  color: #111827;
+}
+
+.btn-period.active {
+  background-color: #ffffff;
+  color: #6366f1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -114,7 +144,6 @@
   width: 100%;
   border-collapse: collapse;
   display: table;
-  min-width: 100%;
   table-layout: fixed;
 }
 
@@ -173,7 +202,7 @@
   border-radius: 8px;
 }
 
-.btn-view-mode, .view-mode-selector .btn-period {
+.btn-view-mode {
   border: none;
   background: transparent;
   padding: 6px 16px;
@@ -185,7 +214,7 @@
   transition: all 0.2s;
 }
 
-.btn-view-mode.active, .view-mode-selector .btn-period.active {
+.btn-view-mode.active {
   background-color: #ffffff;
   color: #6366f1;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -290,15 +319,16 @@
 
   .table-container {
     overflow-x: scroll !important;
-    overflow-y: auto !important;
+    overflow-y: scroll !important;
     -webkit-overflow-scrolling: touch;
-    max-height: calc(100vh - 280px);
+    max-height: calc(100vh - 320px);
     margin-bottom: 16px;
   }
 
   .coupon-table {
-    min-width: 800px !important;
+    min-width: 650px !important; /* 간격을 줄이기 위해 최소 너비 하향 조정 */
     display: table !important;
+    table-layout: auto !important; /* 모바일에서는 자동 레이아웃으로 변경하여 간격 최적화 */
   }
 
   .coupon-table thead {
