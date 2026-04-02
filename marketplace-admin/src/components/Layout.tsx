@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation, Link } from 'react-router-dom';
 import './Layout.css';
 
 // 깔끔한 SVG 아이콘 컴포넌트 정의
@@ -155,6 +155,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <Icons.Menu />
           </button>
           <h2 className="header-page-title">{pageTitle}</h2>
+          <Link to="/dashboard" className="mobile-home-link" title="대시보드로 이동">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </Link>
         </header>
 
         <main className="content-area">

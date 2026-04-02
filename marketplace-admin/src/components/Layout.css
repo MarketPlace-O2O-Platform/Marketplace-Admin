@@ -247,6 +247,7 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 24px;
   position: sticky;
   top: 0;
@@ -339,5 +340,25 @@
 
   .header-page-title {
     font-size: 1rem;
+  }
+}
+
+.mobile-home-link {
+  display: none;
+  color: #111827;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.mobile-home-link:hover {
+  background-color: #f3f4f6;
+}
+
+@media (max-width: 768px) {
+  .mobile-home-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

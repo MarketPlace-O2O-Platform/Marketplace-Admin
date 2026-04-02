@@ -6,7 +6,7 @@
 }
 
 .dashboard-header {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .dashboard-title {
@@ -22,33 +22,31 @@
   margin-top: 4px;
 }
 
-/* Quick Navigation */
 .quick-nav {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
+  display: none;
 }
 
 .quick-nav-btn {
-  padding: 10px 20px;
+  padding: 12px 16px;
   background: white;
+  color: #374151;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
-  color: #374151;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .quick-nav-btn:hover {
   background: #f9fafb;
-  border-color: #6366f1;
-  color: #6366f1;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.quick-nav-btn:active {
+  transform: scale(0.98);
 }
 
 .grid-4 {
@@ -61,6 +59,13 @@
 .grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   margin-bottom: 24px;
 }
@@ -347,29 +352,127 @@
   text-decoration: underline;
 }
 
-/* Accordion Styles */
-.accordion-card {
-  overflow: hidden;
+/* 대시보드 모달 스타일 */
+.dashboard-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.accordion-header {
-  user-select: none;
-  transition: background-color 0.2s;
-}
-
-.accordion-header:hover {
-  background-color: rgba(0, 0, 0, 0.02);
+.dashboard-modal-content {
+  background: white;
   border-radius: 8px;
-  margin: -8px;
-  padding: 8px;
+  width: 90%;
+  max-width: 280px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-.accordion-icon {
-  display: inline-block;
-  margin-right: 8px;
+.dashboard-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dashboard-modal-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.dashboard-modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #9ca3af;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.dashboard-modal-close-btn:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.dashboard-modal-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dashboard-date-picker-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.dashboard-date-picker-group label {
   font-size: 12px;
-  transition: transform 0.3s;
+  font-weight: 600;
+  color: #374151;
+}
+
+.dashboard-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 8px 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.dashboard-btn-cancel {
+  padding: 5px 12px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
   color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dashboard-btn-cancel:hover {
+  background-color: #f9fafb;
+}
+
+.dashboard-btn-confirm {
+  padding: 5px 12px;
+  border: none;
+  background: #6366f1;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dashboard-btn-confirm:hover {
+  background: #4f46e5;
+}
+
+
+.recharts-text {
+  font-size: 12px;
 }
 
 /* Mobile Responsive Adjustments */
@@ -381,19 +484,19 @@
   .grid-2 {
     grid-template-columns: 1fr;
   }
+
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
   .dashboard-container {
-    padding: 12px;
-  }
-
-  .dashboard-header {
-    margin-bottom: 16px;
+    padding: 16px;
   }
 
   .dashboard-title {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .dashboard-subtitle {
@@ -401,33 +504,46 @@
   }
 
   .quick-nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
   .quick-nav-btn {
-    padding: 8px 14px;
-    font-size: 12px;
-    flex: 1;
-    min-width: calc(50% - 4px);
+    padding: 8px 12px;
+    background: white;
+    color: #374151;
+    font-size: 11px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .quick-nav-btn:hover {
+    transform: none;
+    background: #f9fafb;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
   .grid-4 {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .grid-2 {
     gap: 12px;
-    margin-bottom: 12px;
   }
 
   .card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  /* KPI 카드는 모바일에서도 제목과 아이콘이 한 줄(row)에 나오도록 설정 */
+  .grid-4 .dashboard-card .card-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    width: 100%;
   }
 
   .card-header-actions {
@@ -442,40 +558,54 @@
   }
 
   .card-title {
-    font-size: 11px;
-  }
-
-  .section-title {
-    font-size: 14px;
-    margin-bottom: 8px;
+    font-size: 10px;
   }
 
   .metric-value {
-    font-size: 20px;
-    margin: 4px 0;
-  }
-
-  .metric-value.large {
-    font-size: 18px;
+    font-size: 30px;
   }
 
   .metric-sub {
     font-size: 11px;
   }
 
-  .icon-box {
-    width: 32px;
-    height: 32px;
+  .metric-label {
     font-size: 14px;
+  }
+
+  .change-indicator {
+    font-size: 9px;
+  }
+
+  .trend-box {
+    font-size: 10px;  
+    padding: 2px 6px;
+  }
+
+  .trend-text {
+    font-size: 9px;
   }
 
   .dashboard-card {
     padding: 12px;
-    border-radius: 12px;
   }
 
-  .chart-wrapper {
-    height: 200px !important;
+  .section-title {
+    font-size: 14px;
+  }
+
+  .icon-box {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .dashboard-card p,
+  .dashboard-card small,
+  .dashboard-card .metric-label,
+  .dashboard-card .change-indicator,
+  .dashboard-card .trend-text {
+    font-size: 18px !important;
   }
 
   .dashboard-table {
@@ -484,64 +614,18 @@
     white-space: nowrap;
   }
 
-  .dashboard-th {
-    padding: 10px 8px;
-    font-size: 10px;
-  }
-
-  .dashboard-td {
-    padding: 10px 8px;
-    font-size: 12px;
-  }
-
   /* 차트 툴팁 및 라벨 모바일 최적화 */
   .recharts-cartesian-axis-tick text {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .recharts-default-tooltip {
     padding: 4px 8px !important;
-    font-size: 10px !important;
+    font-size: 9px !important;
     border-radius: 6px !important;
   }
 
-  .btn-period {
-    padding: 3px 8px;
-    font-size: 10px;
-  }
-
-  .btn-more {
-    padding: 4px 8px;
-    font-size: 11px;
-  }
-
-  .date-input {
-    font-size: 10px;
-    padding: 3px 6px;
-  }
-
-  .rank-badge {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
-  }
-
-  .status-tag {
-    font-size: 10px;
-    padding: 2px 6px;
-  }
-
-  .btn-xs-link {
-    font-size: 11px;
-  }
-
-  .trend-box {
-    font-size: 10px;
-    padding: 2px 6px;
-  }
-
-  .progress-bg {
-    height: 3px;
-    margin-top: 4px;
+  .recharts-text {
+    font-size: 12px;
   }
 }

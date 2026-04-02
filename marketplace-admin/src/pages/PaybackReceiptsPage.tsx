@@ -15,7 +15,7 @@ interface MemberStat {
 
 const PaybackReceiptsPage: React.FC = () => {
   const navigate = useNavigate();
-  const [viewMode, setViewMode] = useState<'all' | 'member'>('all');
+  const [viewMode, setViewMode] = useState<'all' | 'member'>('member');
   const [receipts, setReceipts] = useState<PaybackReceiptListItem[]>([]);
   const [memberStats, setMemberStats] = useState<MemberStat[]>([]);
   const [memberPeriod, setMemberPeriod] = useState<string>('TODAY');
@@ -114,31 +114,6 @@ const PaybackReceiptsPage: React.FC = () => {
 
         {error && <div className="error-message">{error}</div>}
 
-        <div className="controls-section">
-          {viewMode === 'member' && (
-            <div className="period-selector">
-              <button
-                className={`btn-period ${memberPeriod === 'TODAY' ? 'active' : ''}`}
-                onClick={() => handleMemberPeriodChange('TODAY')}
-              >
-                오늘
-              </button>
-              <button
-                className={`btn-period ${memberPeriod === 'WEEK' ? 'active' : ''}`}
-                onClick={() => handleMemberPeriodChange('WEEK')}
-              >
-                이번주
-              </button>
-              <button
-                className={`btn-period ${memberPeriod === 'ALL' ? 'active' : ''}`}
-                onClick={() => handleMemberPeriodChange('ALL')}
-              >
-                전체
-              </button>
-            </div>
-          )}
-        </div>
-
         <div className="controls-section" style={{ justifyContent: 'space-between' }}>
           {viewMode === 'all' ? (
             <div className="view-mode-selector">
@@ -215,10 +190,10 @@ const PaybackReceiptsPage: React.FC = () => {
                 <tr>
                   <th className="col-rank">순위</th>
                   <th className="col-id">회원 ID</th>
-                  <th className="col-stat text-right">전체 건수</th>
-                  <th className="col-stat text-right">완료 건수</th>
-                  <th className="col-stat text-right">대기 건수</th>
                   <th className="col-action">관리</th>
+                  <th className="col-stat text-right">대기 건수</th>
+                  <th className="col-stat text-right">완료 건수</th>
+                  <th className="col-stat text-right">전체 건수</th>
                 </tr>
               )}
             </thead>
@@ -250,21 +225,21 @@ const PaybackReceiptsPage: React.FC = () => {
                   <tr key={stat.memberId}>
                     <td>{startIndex + index + 1}</td>
                     <td className="coupon-name">{stat.memberId}</td>
-                    <td className="text-right">{stat.receiptCount}건</td>
-                    <td className="text-right" style={{ color: '#059669', fontWeight: 600 }}>{stat.completedCount}건</td>
-                    <td className="text-right">
-                      <span className={`badge ${stat.pendingCount > 0 ? 'badge-warning' : 'badge-success'}`}>
-                        {stat.pendingCount}건 대기
-                      </span>
-                    </td>
                     <td>
-                      <button 
+                      <button
                         className="btn-xs-link"
                         onClick={() => navigate(`/receipt-members/${stat.memberId}`)}
                       >
                         상세보기 →
                       </button>
                     </td>
+                    <td className="text-right">
+                      <span className={`badge ${stat.pendingCount > 0 ? 'badge-warning' : 'badge-success'}`}>
+                        {stat.pendingCount}건 대기
+                      </span>
+                    </td>
+                    <td className="text-right" style={{ color: '#059669', fontWeight: 600 }}>{stat.completedCount}건</td>
+                    <td className="text-right">{stat.receiptCount}건</td>
                   </tr>
                 ))
               )}

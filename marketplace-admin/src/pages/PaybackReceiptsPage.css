@@ -130,21 +130,23 @@
   border-radius: 12px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(229, 231, 235, 0.5);
-  overflow-x: auto; /* 가로 스크롤 활성화 */
-  overflow-y: auto; /* 세로 스크롤 활성화 */
+  overflow-x: scroll !important;
+  overflow-y: scroll !important;
   max-height: 65vh;
   margin-bottom: 24px;
   position: relative;
-  display: block; /* 블록 요소로 지정하여 너비 제한 적용 */
+  display: block;
   width: 100%;
   max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .coupon-table {
   width: 100%;
+  min-width: 900px;
   border-collapse: collapse;
   display: table;
-  table-layout: fixed;
+  table-layout: auto;
 }
 
 .coupon-table thead {
@@ -169,22 +171,12 @@
   z-index: 10;
 }
 
-.coupon-table th:nth-child(1) {
-  width: 10%;
+.coupon-table th:first-child {
+  padding-left: 16px;
 }
 
-.coupon-table th:nth-child(2) {
-  width: 20%;
-}
-
-.coupon-table th:nth-child(3),
-.coupon-table th:nth-child(4),
-.coupon-table th:nth-child(5) {
-  width: 15%;
-}
-
-.coupon-table th:nth-child(6) {
-  width: 25%;
+.coupon-table td:first-child {
+  padding-left: 20px;
 }
 
 .coupon-table td {
@@ -193,7 +185,27 @@
   font-size: 14px;
   color: #374151;
   vertical-align: middle;
+  padding-right: 20px;
 }
+
+
+/* 회원별 목록보기 컬럼 너비 */
+.coupon-table .col-rank {
+  width: 8%;
+}
+
+.coupon-table .col-id {
+  width: 15%;
+}
+
+.coupon-table .col-action {
+  width: 12%;
+}
+
+.coupon-table .col-stat {
+  width: 13%;
+}
+
 
 .view-mode-selector {
   display: flex;
@@ -350,9 +362,27 @@
   }
 
   .coupon-table td {
-    padding: 8px 4px;
+    padding: 8px 10px;
     font-size: 11px;
     white-space: nowrap;
+  }
+
+
+  /* 회원별 목록보기 컬럼 너비 */
+  .coupon-table .col-rank {
+    width: 2%;
+  }
+
+  .coupon-table .col-id {
+    width: 3%;
+  }
+
+  .coupon-table .col-action {
+    width: 2%;
+  }
+
+  .coupon-table .col-stat {
+    width: 8%;
   }
 
   .account-info {

@@ -229,59 +229,61 @@
 
 @media (max-width: 768px) {
   .member-receipt-container {
-    padding: 16px;
+    padding: 12px;
   }
 
   .summary-compact-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
   }
 
   .summary-compact-grid .compact-card.info-card {
     grid-column: 1 / -1;
+    padding: 16px;
   }
 
   .compact-card {
-    padding: 12px;
+    padding: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
   }
 
-  /* 모바일에서 stat 카드는 아이콘 숨기고 완전히 한 줄로 */
   .compact-card.stat-card {
-    padding: 10px 12px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 80px;
   }
 
   .compact-card.stat-card .compact-card-header {
-    display: contents;
-    margin-bottom: 0;
+    margin-bottom: 4px;
+    width: 100%;
   }
 
   .compact-card.stat-card .compact-icon {
-    display: none;
+    font-size: 14px;
   }
 
   .compact-card.stat-card .card-title {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
-    color: #374151;
-    margin: 0;
-    margin-right: 8px;
+    color: #6b7280;
+    text-transform: uppercase;
   }
 
   .compact-card.stat-card .stat-content {
-    display: contents;
-    margin-top: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
   }
 
   .compact-card.stat-card .metric-value-sm {
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 20px;
   }
 
   .compact-card.stat-card .metric-unit {
-    font-size: 13px;
-    margin-left: 2px;
+    font-size: 12px;
   }
 
   .compact-card.stat-card.pending .metric-value-sm {
@@ -292,13 +294,29 @@
     color: #059669;
   }
 
-  .info-label,
+  .info-label {
+    font-size: 13px;
+  }
+  
   .info-value {
-    font-size: 12px;
+    font-size: 14px;
+  }
+
+  .info-row {
+    padding: 6px 0;
   }
 
   .receipt-card-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .receipt-card-image {
+    height: 220px; /* 모바일에서 이미지가 너무 길지 않게 조정 */
+  }
+
+  .receipt-card-body {
+    padding: 14px;
   }
 }
 /* Modal Styles */
@@ -319,9 +337,9 @@
 .receipt-modal .modal-content {
   background: white;
   border-radius: 16px;
-  width: 100%;
+  width: 95%;
   max-width: 600px;
-  max-height: 90vh;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -329,7 +347,7 @@
 }
 
 .modal-header-row {
-  padding: 16px 20px;
+  padding: 12px 16px;
   border-bottom: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
@@ -340,6 +358,14 @@
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.modal-title {
+  font-size: 15px;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .modal-close-icon {
@@ -357,7 +383,7 @@
   background: #f3f4f6;
   display: flex;
   justify-content: center;
-  padding: 20px;
+  padding: 12px;
 }
 
 .modal-body-image img {

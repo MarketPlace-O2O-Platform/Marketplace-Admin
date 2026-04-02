@@ -45,9 +45,16 @@ const DashboardPage: React.FC = () => {
   const [topReceiptMembers, setTopReceiptMembers] = useState<TopReceiptMember[]>([]);
   const [receiptPeriod, setReceiptPeriod] = useState<string>('WEEK'); // 기본값 WEEK
   const [receiptSubmissionStats, setReceiptSubmissionStats] = useState<ReceiptSubmissionStats | null>(null);
-  const [receiptSubmissionPeriod, setReceiptSubmissionPeriod] = useState<string>('7D');
-  const [customStartDate, setCustomStartDate] = useState<string>('');
-  const [customEndDate, setCustomEndDate] = useState<string>('');
+  const [receiptSubmissionPeriod, setReceiptSubmissionPeriod] = useState<string>('CUSTOM');
+  const [customStartDate, setCustomStartDate] = useState<string>(() => {
+    const date = new Date();
+    date.setDate(date.getDate() - 7);
+    return date.toISOString().split('T')[0];
+  });
+  const [customEndDate, setCustomEndDate] = useState<string>(() => {
+    return new Date().toISOString().split('T')[0];
+  });
+  const [showDateModal, setShowDateModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [accordionStates, setAccordionStates] = useState({
@@ -68,7 +75,11 @@ const DashboardPage: React.FC = () => {
     loadTopMarkets(topMarketsPeriod);
     loadTopMarketsCompleted(topMarketsCompletedPeriod);
     loadTopReceiptMembers(receiptPeriod);
-    loadReceiptSubmissionStats('7D');
+    const today = new Date().toISOString().split('T')[0];
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const startDate = sevenDaysAgo.toISOString().split('T')[0];
+    loadReceiptSubmissionStats('', startDate, today);
   }, []);
 
   const loadAllStats = async () => {
@@ -218,7 +229,9 @@ const DashboardPage: React.FC = () => {
 
   const formatDate = (value: string) => {
     const date = new Date(value);
-    return `${date.getMonth() + 1}/${date.getDate()}`;
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${month}/${day}`;
   };
 
   const renderTrend = (value: number | undefined, suffix: string = '') => {
@@ -345,12 +358,12 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* Charts Section */}
-        <div className="grid-2">
+        <div className="grid-3">
           <div className="dashboard-card">
             <h3 className="section-title">주간 방문자 추이</h3>
             <div className="chart-wrapper" style={{ width: '100%', height: 300 }}>
               <ResponsiveContainer>
-                <AreaChart data={recentVisitors} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <AreaChart data={recentVisitors} margin={{ top: 10, right: 10, left: -30, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorVisitors" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1}/>
@@ -365,6 +378,10 @@ const DashboardPage: React.FC = () => {
                     tickLine={false} 
                     tick={{fill: '#9ca3af'}}
                     dy={10}
+                    interval={0}
+                    angle={-30}
+                    textAnchor="end"
+                    height={60}
                   />
                   <YAxis 
                     axisLine={false} 
@@ -393,15 +410,18 @@ const DashboardPage: React.FC = () => {
             <h3 className="section-title">일별 신규 가입자</h3>
             <div className="chart-wrapper" style={{ width: '100%', height: 300 }}>
               <ResponsiveContainer>
-                <BarChart data={dailySignups} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <BarChart data={dailySignups} margin={{ top: 10, right: 10, left: -30, bottom: 50 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickFormatter={formatDate} 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{fill: '#9ca3af'}}
-                    dy={10}
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={formatDate}
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{fill: '#9ca3af', fontSize: 11}}
+                    interval={0}
+                    angle={-30}
+                    textAnchor="end"
+                    height={30}
                   />
                   <YAxis 
                     axisLine={false} 
@@ -428,48 +448,38 @@ const DashboardPage: React.FC = () => {
       <div className="dashboard-card">
         <div className="card-header">
           <h3 className="section-title">영수증 제출 추이</h3>
-              <div className="card-header-actions">
+          <div className="card-header-actions">
             <div className="period-selector">
-              <button 
+              <button
                 className={`btn-period ${receiptSubmissionPeriod === '7D' ? 'active' : ''}`}
                 onClick={() => handleReceiptSubmissionPeriodChange('7D')}
               >
                 7일
               </button>
-              <button 
+              <button
                 className={`btn-period ${receiptSubmissionPeriod === '1M' ? 'active' : ''}`}
                 onClick={() => handleReceiptSubmissionPeriodChange('1M')}
               >
                 1달
               </button>
-              <button 
+              <button
                 className={`btn-period ${receiptSubmissionPeriod === '3M' ? 'active' : ''}`}
                 onClick={() => handleReceiptSubmissionPeriodChange('3M')}
               >
                 3달
               </button>
-            </div>
-            <div className="date-input-group">
-              <input 
-                type="date" 
-                className="date-input"
-                value={customStartDate}
-                onChange={(e) => setCustomStartDate(e.target.value)}
-              />
-              <span style={{ color: '#6b7280', fontSize: '12px' }}>~</span>
-              <input 
-                type="date" 
-                className="date-input"
-                value={customEndDate}
-                onChange={(e) => setCustomEndDate(e.target.value)}
-              />
-              <button className="btn-period active" onClick={handleCustomDateSearch} style={{ border: '1px solid #e5e7eb' }}>조회</button>
+              <button
+                className={`btn-period ${receiptSubmissionPeriod === 'CUSTOM' ? 'active' : ''}`}
+                onClick={() => setShowDateModal(true)}
+              >
+                날짜 선택
+              </button>
             </div>
           </div>
         </div>
             <div className="chart-wrapper" style={{ width: '100%', height: 300 }}>
           <ResponsiveContainer>
-            <BarChart data={receiptSubmissionStats?.breakdown || []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <BarChart data={receiptSubmissionStats?.breakdown || []} margin={{ top: 10, right: 10, left: -30, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
               <XAxis 
                 dataKey="label" 
@@ -477,6 +487,10 @@ const DashboardPage: React.FC = () => {
                 tickLine={false} 
                 tick={{fill: '#9ca3af'}}
                 dy={10}
+                interval={0}
+                angle={-30}
+                textAnchor="end"
+                height={60}
               />
               <YAxis 
                 axisLine={false} 
@@ -759,6 +773,51 @@ const DashboardPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* 날짜 선택 모달 */}
+      {showDateModal && (
+        <div className="dashboard-modal-overlay" onClick={() => setShowDateModal(false)}>
+          <div className="dashboard-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="dashboard-modal-header">
+              <h3>날짜 선택</h3>
+              <button className="dashboard-modal-close-btn" onClick={() => setShowDateModal(false)}>×</button>
+            </div>
+            <div className="dashboard-modal-body">
+              <div className="dashboard-date-picker-group">
+                <label>시작 날짜</label>
+                <input
+                  type="date"
+                  className="date-input"
+                  value={customStartDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                />
+              </div>
+              <div className="dashboard-date-picker-group">
+                <label>종료 날짜</label>
+                <input
+                  type="date"
+                  className="date-input"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="dashboard-modal-footer">
+              <button className="dashboard-btn-cancel" onClick={() => setShowDateModal(false)}>취소</button>
+              <button
+                className="dashboard-btn-confirm"
+                onClick={() => {
+                  setReceiptSubmissionPeriod('CUSTOM');
+                  loadReceiptSubmissionStats('', customStartDate, customEndDate);
+                  setShowDateModal(false);
+                }}
+              >
+                조회
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };
