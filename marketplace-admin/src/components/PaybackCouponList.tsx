@@ -8,7 +8,7 @@ interface PaybackCouponListProps {
   marketName: string;
 }
 
-const PaybackCouponList: React.FC<PaybackCouponListProps> = ({ marketId, marketName }) => {
+const PaybackCouponList: React.FC<PaybackCouponListProps> = ({ marketId }) => {
   const navigate = useNavigate();
   const [coupons, setCoupons] = useState<PaybackCouponListItem[]>([]);
   const [loading, setLoading] = useState(true);

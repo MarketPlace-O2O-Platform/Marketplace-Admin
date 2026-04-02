@@ -10,7 +10,7 @@ interface MarketCouponListProps {
 }
 
 // 기존 증정쿠폰 컴포넌트를 분리
-const GiftCouponList: React.FC<MarketCouponListProps> = ({ marketId, marketName }) => {
+const GiftCouponList: React.FC<MarketCouponListProps> = ({ marketId }) => {
   const navigate = useNavigate();
   const [coupons, setCoupons] = useState<CouponListItem[]>([]);
   const [loading, setLoading] = useState(true);
