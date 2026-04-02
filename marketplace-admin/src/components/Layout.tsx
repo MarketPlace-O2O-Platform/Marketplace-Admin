@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate, useLocation, Link } from 'react-router-dom';
+import { NavLink, useLocation, Link } from 'react-router-dom';
 import './Layout.css';
 
 // 깔끔한 SVG 아이콘 컴포넌트 정의
@@ -55,7 +55,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     return window.innerWidth <= 768;
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
 
   const getUser = () => {
