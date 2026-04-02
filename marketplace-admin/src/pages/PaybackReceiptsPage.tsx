@@ -158,18 +158,27 @@ const PaybackReceiptsPage: React.FC = () => {
               </button>
             </div>
           )}
-          
-          <div className="page-size-selector">
-            <span>표시:</span>
-            {[10, 30, 50].map(size => (
-              <button
-                key={size}
-                className={`btn-size ${pageSize === size ? 'active' : ''}`}
-                onClick={() => handlePageSizeChange(size)}
-              >
-                {size}개
-              </button>
-            ))}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="total-count">
+              <span style={{ fontSize: '14px', color: '#6b7280', fontWeight: 500 }}>총</span>
+              <span style={{ fontSize: '16px', color: '#111827', fontWeight: 700, marginLeft: '4px' }}>
+                {currentData?.length || 0}
+              </span>
+              <span style={{ fontSize: '14px', color: '#6b7280', fontWeight: 500 }}>개</span>
+            </div>
+            <div className="page-size-selector">
+              <span>표시:</span>
+              {[10, 30, 50].map(size => (
+                <button
+                  key={size}
+                  className={`btn-size ${pageSize === size ? 'active' : ''}`}
+                  onClick={() => handlePageSizeChange(size)}
+                >
+                  {size}개
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
