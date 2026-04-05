@@ -120,7 +120,13 @@ const TopReceiptMembersPage: React.FC = () => {
         <div className="page-header">
           <div>
             <h1 className="page-title">🧾 영수증 인증 회원 목록</h1>
-            <p className="page-subtitle">모든 영수증 인증 회원을 확인하세요. (총 {members.length}명)</p>
+            <p className="page-subtitle">
+              {period === 'DAY' && '최근 1일 '}
+              {period === 'WEEK' && '최근 1주 '}
+              {period === 'MONTH' && '최근 1달 '}
+              {period === '' && '전체 기간 '}
+              영수증 인증 회원 (총 {members.length}명)
+            </p>
           </div>
           <button onClick={() => navigate('/dashboard')} className="btn btn-secondary">
             대시보드로 돌아가기
@@ -175,6 +181,7 @@ const TopReceiptMembersPage: React.FC = () => {
             >
               50개
             </button>
+            <span style={{ marginLeft: '12px', color: '#111827' }}>총: <strong>{members.length}</strong>개</span>
           </div>
         </div>
 
@@ -201,13 +208,13 @@ const TopReceiptMembersPage: React.FC = () => {
                     onClick={() => handleMemberClick(member.memberId)}
                     style={{ cursor: 'pointer' }}
                   >
-                    <td>
+                    <td data-label="순위">
                       <span className="rank-badge">{startIndex + index + 1}</span>
                     </td>
-                    <td className="font-medium">{member.memberId}</td>
-                    <td className="text-right">{member.receiptCount}회</td>
-                    <td className="text-right" style={{ color: '#059669' }}>{member.completedCount}건</td>
-                    <td className="text-right">
+                    <td data-label="회원 학번(ID)" className="font-medium">{member.memberId}</td>
+                    <td data-label="전체 인증" className="text-right">{member.receiptCount}회</td>
+                    <td data-label="환급 완료" className="text-right" style={{ color: '#059669' }}>{member.completedCount}건</td>
+                    <td data-label="미환급 대기" className="text-right">
                       <span className={`status-tag ${member.pendingCount > 0 ? 'tag-warning' : 'tag-neutral'}`}>
                         {member.pendingCount}건
                       </span>

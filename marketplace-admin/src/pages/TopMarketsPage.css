@@ -44,14 +44,15 @@
 }
 
 .btn-size {
-  padding: 6px 12px;
+  padding: 4px 8px;
   border: 1px solid #e5e7eb;
   background: white;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 4px;
+  font-size: 12px;
   color: #6b7280;
   cursor: pointer;
   transition: all 0.2s;
+  min-width: auto;
 }
 
 .btn-size:hover {
@@ -246,5 +247,118 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .top-markets-container {
+    padding: 8px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .page-subtitle {
+    font-size: 12px;
+  }
+
+  .controls-section {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .period-selector {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 3px !important;
+  }
+
+  .btn-period {
+    width: 100%;
+    font-size: 12px;
+    padding: 6px 4px;
+  }
+
+  .page-size-selector {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .page-size-selector span {
+    font-size: 12px;
+  }
+
+  .btn-size {
+    flex: 1;
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  /* 테이블 최적화 - 테이블 형태 유지 */
+  .markets-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .markets-table {
+    font-size: 11px;
+    min-width: 100%;
+  }
+
+  .markets-table th {
+    padding: 8px 4px;
+    font-size: 10px;
+    white-space: nowrap;
+    padding-right: 8px;
+  }
+
+  .markets-table td {
+    padding: 10px 4px;
+    font-size: 12px;
+    padding-right: 8px;
+  }
+
+  .markets-table td.font-medium {
+    font-weight: 600;
+  }
+
+  .rank-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+    border-radius: 4px;
+  }
+
+  .status-tag {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+
+  .pagination {
+    gap: 4px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .pagination-btn {
+    padding: 6px 8px;
+    font-size: 12px;
+    min-width: 32px;
+  }
+
+  .btn {
+    font-size: 12px;
+    padding: 6px 12px;
   }
 }
