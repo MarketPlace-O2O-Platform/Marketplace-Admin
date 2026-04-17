@@ -9,6 +9,9 @@ import type {
   WeeklyAverageResponse,
   RecentVisitorsResponse,
   TopMarketsResponse,
+  FunnelStatsResponse,
+  RetentionStatsResponse,
+  ProcessingTimeStatsResponse,
 } from '../types/stats';
 
 export const statsAPI = {
@@ -59,6 +62,21 @@ export const statsAPI = {
 
   getTopMarketsCompleted: async (): Promise<TopMarketsResponse> => {
     const response = await apiClient.get<TopMarketsResponse>('/admins/payback-coupons/stats/top-markets/completed');
+    return response.data;
+  },
+
+  getFunnelStats: async (): Promise<FunnelStatsResponse> => {
+    const response = await apiClient.get<FunnelStatsResponse>('/admins/payback-coupons/stats/funnel');
+    return response.data;
+  },
+
+  getRetentionStats: async (): Promise<RetentionStatsResponse> => {
+    const response = await apiClient.get<RetentionStatsResponse>('/admins/payback-coupons/stats/retention');
+    return response.data;
+  },
+
+  getProcessingTimeStats: async (): Promise<ProcessingTimeStatsResponse> => {
+    const response = await apiClient.get<ProcessingTimeStatsResponse>('/admins/payback-coupons/stats/processing-time');
     return response.data;
   },
 };

@@ -38,6 +38,9 @@ const DashboardPage: React.FC = () => {
   const [dailySignups, setDailySignups] = useState<DailySignupStat[]>([]);
   const [paybackStats, setPaybackStats] = useState<{ avgCouponDownloadPerMember: number; paybackRate: number } | null>(null);
   const [recentPaybackStats, setRecentPaybackStats] = useState<{ recentSevenDaysMemberCount: number; avgPaybackCouponDownloadPerMember: number } | null>(null);
+  const [funnelStats, setFunnelStats] = useState<{ totalDownloadCount: number; expiredCount: number; expiryRate: number; receiptSubmittedCount: number; downloadToSubmitRate: number; paybackCompletedCount: number; submitToCompleteRate: number; overallConversionRate: number } | null>(null);
+  const [retentionStats, setRetentionStats] = useState<{ completedMemberCount: number; retainedMemberCount: number; retentionRate: number } | null>(null);
+  const [processingTimeStats, setProcessingTimeStats] = useState<{ measuredCount: number; avgHours: number; avgDays: number } | null>(null);
   const [topMarkets, setTopMarkets] = useState<TopMarket[]>([]);
   const [topMarketsPeriod, setTopMarketsPeriod] = useState<string>('WEEK');
   const [topMarketsCompleted, setTopMarketsCompleted] = useState<TopMarket[]>([]);
@@ -83,6 +86,7 @@ const DashboardPage: React.FC = () => {
         todayRes, compareRes, weeklyRes, recentVisitorsRes,
         signupRes, dailySignupRes,
         paybackRes, recentPaybackRes,
+        funnelRes, retentionRes, processingTimeRes,
       ] = await Promise.all([
         statsAPI.getTodayStats(),
         statsAPI.compareYesterday(),
@@ -92,6 +96,9 @@ const DashboardPage: React.FC = () => {
         statsAPI.getDailySignupStats(),
         statsAPI.getPaybackCouponStats(),
         statsAPI.getRecentPaybackCouponStats(),
+        statsAPI.getFunnelStats(),
+        statsAPI.getRetentionStats(),
+        statsAPI.getProcessingTimeStats(),
       ]);
 
       setTodayStats(todayRes.response);
@@ -106,6 +113,9 @@ const DashboardPage: React.FC = () => {
       setDailySignups(dailySignupRes.response.dailyStats);
       setPaybackStats(paybackRes.response);
       setRecentPaybackStats(recentPaybackRes.response);
+      setFunnelStats(funnelRes.response);
+      setRetentionStats(retentionRes.response);
+      setProcessingTimeStats(processingTimeRes.response);
       setError('');
     } catch (err) {
       setError('통계 데이터를 불러오는데 실패했습니다.');
@@ -535,14 +545,120 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
           <div className="dashboard-card">
-            <h3 className="card-title">인당 평균 다운로드</h3>
+            <h3 className="card-title">인당 평균 환급 쿠폰 다운</h3>
             <p className="metric-value large">{paybackStats?.avgCouponDownloadPerMember.toFixed(1) ?? 0}개</p>
           </div>
           <div className="dashboard-card">
             <h3 className="card-title">최근 가입자 활동성</h3>
             <p className="metric-value large">{recentPaybackStats?.avgPaybackCouponDownloadPerMember.toFixed(1) ?? 0}개</p>
             <div className="metric-sub">
-              <span>최근 7일 가입자 평균 다운</span>
+              <span>최근 7일 가입 회원의 가입 후 7일 내 평균 다운</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Funnel & Retention Stats */}
+        <div className="grid-3">
+          <div className="dashboard-card">
+            <h3 className="section-title">퍼널 전환율</h3>
+            <div style={{ padding: '16px 0' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '14px', color: '#6b7280' }}>전체 다운로드</span>
+                  <span style={{ fontSize: '20px', fontWeight: '600' }}>{funnelStats?.totalDownloadCount.toLocaleString() ?? 0}건</span>
+                </div>
+                <div style={{ fontSize: '12px', color: '#9ca3af' }}>
+                  만료: {funnelStats?.expiredCount.toLocaleString() ?? 0}건 ({funnelStats?.expiryRate.toFixed(1) ?? 0}%)
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '14px', color: '#6b7280' }}>영수증 제출</span>
+                  <span style={{ fontSize: '20px', fontWeight: '600', color: '#8b5cf6' }}>{funnelStats?.receiptSubmittedCount.toLocaleString() ?? 0}건</span>
+                </div>
+                <div className="progress-bg">
+                  <div className="progress-fill" style={{width: `${funnelStats?.downloadToSubmitRate ?? 0}%`, backgroundColor: '#8b5cf6'}}></div>
+                </div>
+                <div style={{ fontSize: '12px', color: '#8b5cf6', marginTop: '4px', textAlign: 'right' }}>
+                  전환율 {funnelStats?.downloadToSubmitRate.toFixed(1) ?? 0}%
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '14px', color: '#6b7280' }}>환급 완료</span>
+                  <span style={{ fontSize: '20px', fontWeight: '600', color: '#10b981' }}>{funnelStats?.paybackCompletedCount.toLocaleString() ?? 0}건</span>
+                </div>
+                <div className="progress-bg">
+                  <div className="progress-fill" style={{width: `${funnelStats?.submitToCompleteRate ?? 0}%`, backgroundColor: '#10b981'}}></div>
+                </div>
+                <div style={{ fontSize: '12px', color: '#10b981', marginTop: '4px', textAlign: 'right' }}>
+                  전환율 {funnelStats?.submitToCompleteRate.toFixed(1) ?? 0}%
+                </div>
+              </div>
+
+              <div style={{ borderTop: '2px solid #e5e7eb', paddingTop: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <span style={{ fontSize: '14px', fontWeight: '600', color: '#374151' }}>전체 전환율</span>
+                  <span style={{ fontSize: '24px', fontWeight: '700', color: '#6366f1' }}>{funnelStats?.overallConversionRate.toFixed(1) ?? 0}%</span>
+                </div>
+                <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>
+                  다운로드 → 환급 완료
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="dashboard-card">
+            <h3 className="section-title">재다운로드율</h3>
+            <div style={{ padding: '16px 0' }}>
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>환급 완료 경험 회원</div>
+                <p className="metric-value large">{retentionStats?.completedMemberCount.toLocaleString() ?? 0}명</p>
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>이후 재다운로드 회원</div>
+                <p className="metric-value large" style={{ color: '#10b981' }}>{retentionStats?.retainedMemberCount.toLocaleString() ?? 0}명</p>
+              </div>
+
+              <div style={{ borderTop: '2px solid #e5e7eb', paddingTop: '16px' }}>
+                <div style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>재다운로드율</div>
+                <p className="metric-value" style={{ fontSize: '32px', color: '#6366f1' }}>{retentionStats?.retentionRate.toFixed(1) ?? 0}%</p>
+                <div className="progress-bg" style={{ marginTop: '12px' }}>
+                  <div className="progress-fill" style={{width: `${retentionStats?.retentionRate ?? 0}%`}}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="dashboard-card">
+            <h3 className="section-title">평균 환급 처리 시간</h3>
+            <div style={{ padding: '16px 0' }}>
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>측정 대상 건수</div>
+                <p className="metric-value large">{processingTimeStats?.measuredCount.toLocaleString() ?? 0}건</p>
+                <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>
+                  배포 이후 완료된 건
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>평균 처리 시간</div>
+                <p className="metric-value" style={{ fontSize: '32px', color: '#6366f1' }}>{processingTimeStats?.avgDays.toFixed(1) ?? 0}일</p>
+                <div style={{ fontSize: '14px', color: '#9ca3af', marginTop: '4px' }}>
+                  ≈ {processingTimeStats?.avgHours.toFixed(1) ?? 0}시간
+                </div>
+              </div>
+
+              {processingTimeStats && processingTimeStats.measuredCount === 0 && (
+                <div style={{ padding: '12px', backgroundColor: '#fef3c7', borderRadius: '8px', border: '1px solid #fde68a' }}>
+                  <div style={{ fontSize: '12px', color: '#92400e' }}>
+                    ⚠️ 배포 후 완료된 데이터가 아직 없습니다.
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -84,3 +84,35 @@ export interface DailySignupStatsResponse {
     dailyStats: DailySignupStat[];
   };
 }
+
+export interface FunnelStatsResponse {
+  message: string;
+  response: {
+    totalDownloadCount: number;
+    expiredCount: number;
+    expiryRate: number;
+    receiptSubmittedCount: number;
+    downloadToSubmitRate: number;
+    paybackCompletedCount: number;
+    submitToCompleteRate: number;
+    overallConversionRate: number;
+  };
+}
+
+export interface RetentionStatsResponse {
+  message: string;
+  response: {
+    completedMemberCount: number;
+    retainedMemberCount: number;
+    retentionRate: number;
+  };
+}
+
+export interface ProcessingTimeStatsResponse {
+  message: string;
+  response: {
+    measuredCount: number;
+    avgHours: number;
+    avgDays: number;
+  };
+}
